@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{90AD8BDA-EBDC-4E05-A801-CF8BADCBA33F}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FlightStats</RootNamespace>
+    <AssemblyName>FlightStats</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputPath>bin\x64\Release\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Clipper.cs" />
+    <Compile Include="ImgWriterF.cs" />
+    <Compile Include="LinWriterF.cs" />
+    <Compile Include="PntWriterF.cs" />
+    <Compile Include="ShpInfoF.cs" />
+    <Compile Include="DTMInfoF.cs" />
+    <Compile Include="StatsF.cs" />
+    <Compile Include="InputFCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InputFCtrl.Designer.cs">
+      <DependentUpon>InputFCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DrawPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ExpressCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExpressCtrl.Designer.cs">
+      <DependentUpon>ExpressCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GraphCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GraphCtrl.Designer.cs">
+      <DependentUpon>GraphCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ImgWriter.cs" />
+    <Compile Include="PntWriter.cs" />
+    <Compile Include="DTMInfo.cs" />
+    <Compile Include="InputCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InputCtrl.Designer.cs">
+      <DependentUpon>InputCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LasReader.cs" />
+    <Compile Include="LasReader_12.cs" />
+    <Compile Include="LasReader_14.cs" />
+    <Compile Include="LinWriter.cs" />
+    <Compile Include="MainF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainF.Designer.cs">
+      <DependentUpon>MainF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MonoModel.cs" />
+    <Compile Include="PRJInfo.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShpInfo.cs" />
+    <Compile Include="ShpLib.cs" />
+    <Compile Include="Stats.cs" />
+    <Compile Include="StatsCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StatsCtrl.Designer.cs">
+      <DependentUpon>StatsCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Util.cs" />
+    <Compile Include="ViewerCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ViewerCtrl.Designer.cs">
+      <DependentUpon>ViewerCtrl.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="InputFCtrl.resx">
+      <DependentUpon>InputFCtrl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExpressCtrl.resx">
+      <DependentUpon>ExpressCtrl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GraphCtrl.resx">
+      <DependentUpon>GraphCtrl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputCtrl.resx">
+      <DependentUpon>InputCtrl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainF.resx">
+      <DependentUpon>MainF.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="StatsCtrl.resx">
+      <DependentUpon>StatsCtrl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewerCtrl.resx">
+      <DependentUpon>ViewerCtrl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Icon.ico" />
+    <None Include="imgs\View_Poly.png" />
+    <None Include="imgs\Help.png" />
+    <None Include="imgs\View_ZoomCentered.png" />
+    <None Include="imgs\View_ZoomAll.png" />
+    <None Include="imgs\View_Vect.png" />
+    <None Include="imgs\View_Pol.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(SolutionDir)\$(TargetName)\lib\ShpLib.dll $(SolutionDir)\$(TargetName)\$(OutDir)
+copy $(SolutionDir)\$(TargetName)\doc\ViewerHelp.pdf $(SolutionDir)\$(TargetName)\$(OutDir)
+</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
