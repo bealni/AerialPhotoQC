@@ -45,6 +45,9 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -57,6 +60,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cfg.cs" />
+    <Compile Include="Cfg_Data.cs" />
     <Compile Include="Clipper.cs" />
     <Compile Include="DrawPanel.cs">
       <SubType>Component</SubType>
@@ -95,6 +100,12 @@
       <DependentUpon>MainF.cs</DependentUpon>
     </Compile>
     <Compile Include="MonoModel.cs" />
+    <Compile Include="ObliqueSimCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ObliqueSimCtrl.Designer.cs">
+      <DependentUpon>ObliqueSimCtrl.cs</DependentUpon>
+    </Compile>
     <Compile Include="PntWriter.cs" />
     <Compile Include="PntWriterF.cs" />
     <Compile Include="PRJInfo.cs" />
@@ -130,6 +141,9 @@
     <EmbeddedResource Include="MainF.resx">
       <DependentUpon>MainF.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ObliqueSimCtrl.resx">
+      <DependentUpon>ObliqueSimCtrl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -159,6 +173,7 @@
   <ItemGroup>
     <Content Include="Icon.ico" />
     <Content Include="imgs\Help.png" />
+    <None Include="imgs\Plane.png" />
     <Content Include="imgs\View_Pol.png" />
     <Content Include="imgs\View_Poly.png" />
     <Content Include="imgs\View_Vect.png" />
@@ -169,7 +184,12 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(SolutionDir)\$(TargetName)\lib\ShpLib.dll $(SolutionDir)\$(TargetName)\$(OutDir)
+copy $(SolutionDir)\$(TargetName)\lib\Newtonsoft.Json.dll $(SolutionDir)\$(TargetName)\$(OutDir)
 copy $(SolutionDir)\$(TargetName)\doc\ViewerHelp.pdf $(SolutionDir)\$(TargetName)\$(OutDir)
+copy $(SolutionDir)\$(TargetName)\$(OutDir)\AerialPhotoQC.exe  $(SolutionDir)\dist
+copy $(SolutionDir)\$(TargetName)\$(OutDir)\Newtonsoft.Json.dll  $(SolutionDir)\dist
+copy $(SolutionDir)\$(TargetName)\$(OutDir)\ShpLib.dll  $(SolutionDir)\dist
+copy $(SolutionDir)\$(TargetName)\$(OutDir)\ViewerHelp.pdf  $(SolutionDir)\dist
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

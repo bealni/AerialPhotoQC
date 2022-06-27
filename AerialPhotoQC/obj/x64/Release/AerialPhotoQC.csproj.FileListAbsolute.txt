@@ -1,10 +1,12 @@
+D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\bin\x64\Release\AerialPhotoQC.exe
+D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\bin\x64\Release\Newtonsoft.Json.dll
 D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\obj\x64\Release\AerialPhotoQC.GraphCtrl.resources
 D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\obj\x64\Release\AerialPhotoQC.InputCtrl.resources
 D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\obj\x64\Release\AerialPhotoQC.InputFCtrl.resources
 D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\obj\x64\Release\AerialPhotoQC.MainF.resources
+D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\obj\x64\Release\AerialPhotoQC.ObliqueSimCtrl.resources
 D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\obj\x64\Release\AerialPhotoQC.Properties.Resources.resources
 D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\obj\x64\Release\AerialPhotoQC.StatsCtrl.resources
-D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\obj\x64\Release\AerialPhotoQC.csproj.GenerateResource.Cache
-D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\bin\x64\Release\AerialPhotoQC.exe
-D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\obj\x64\Release\AerialPhotoQC.exe
 D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\obj\x64\Release\AerialPhotoQC.ViewerCtrl.resources
+D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\obj\x64\Release\AerialPhotoQC.csproj.GenerateResource.Cache
+D:\Data\Proj\RandD\_________ElSalvador\Proj\sourcetree\AerialPhotoQC\AerialPhotoQC\obj\x64\Release\AerialPhotoQC.exe

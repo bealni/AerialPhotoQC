@@ -53,6 +53,8 @@ namespace AerialPhotoQC
         public List<List<double>> m_PntHMax;
         public List<List<double>> m_PntHAvg;
         public List<List<double>> m_PntHStd;
+        public List<List<double>> m_PntOverOblF;
+        public List<List<double>> m_PntOverOblL;
 
         public double m_nLinMinX;
         public double m_nLinMinY;
@@ -87,6 +89,14 @@ namespace AerialPhotoQC
         public List<double> m_LinH_Max;
         public List<double> m_LinH_Avg;
         public List<double> m_LinH_Std;
+        public List<double> m_LinOverOblF_Min;
+        public List<double> m_LinOverOblF_Max;
+        public List<double> m_LinOverOblF_Avg;
+        public List<double> m_LinOverOblF_Std;
+        public List<double> m_LinOverOblL_Min;
+        public List<double> m_LinOverOblL_Max;
+        public List<double> m_LinOverOblL_Avg;
+        public List<double> m_LinOverOblL_Std;
 
         public double m_nMinX;
         public double m_nMinY;
@@ -126,6 +136,8 @@ namespace AerialPhotoQC
             m_PntHMax = null;
             m_PntHAvg = null;
             m_PntHStd = null;
+            m_PntOverOblF = null;
+            m_PntOverOblL = null;
 
             m_LinXs = null;
             m_LinYs = null;
@@ -156,6 +168,14 @@ namespace AerialPhotoQC
             m_LinH_Max = null;
             m_LinH_Avg = null;
             m_LinH_Std = null;
+            m_LinOverOblF_Min = null;
+            m_LinOverOblF_Max = null;
+            m_LinOverOblF_Avg = null;
+            m_LinOverOblF_Std = null;
+            m_LinOverOblL_Min = null;
+            m_LinOverOblL_Max = null;
+            m_LinOverOblL_Avg = null;
+            m_LinOverOblL_Std = null;
 
             DoClose();
         }
@@ -546,6 +566,28 @@ namespace AerialPhotoQC
                 m_PntHStd.Clear();
                 m_PntHStd = null;
             }
+            if (m_PntOverOblF != null)
+            {
+                Count = m_PntOverOblF.Count;
+                for (i = 0; i < Count; i++)
+                {
+                    m_PntOverOblF[i].Clear();
+                    m_PntOverOblF[i] = null;
+                }
+                m_PntOverOblF.Clear();
+                m_PntOverOblF = null;
+            }
+            if (m_PntOverOblL != null)
+            {
+                Count = m_PntOverOblL.Count;
+                for (i = 0; i < Count; i++)
+                {
+                    m_PntOverOblL[i].Clear();
+                    m_PntOverOblL[i] = null;
+                }
+                m_PntOverOblL.Clear();
+                m_PntOverOblL = null;
+            }
 
             m_nLinMinX = 0.0;
             m_nLinMinY = 0.0;
@@ -713,6 +755,46 @@ namespace AerialPhotoQC
             {
                 m_LinH_Std.Clear();
                 m_LinH_Std = null;
+            }
+            if (m_LinOverOblF_Min != null)
+            {
+                m_LinOverOblF_Min.Clear();
+                m_LinOverOblF_Min = null;
+            }
+            if (m_LinOverOblF_Max != null)
+            {
+                m_LinOverOblF_Max.Clear();
+                m_LinOverOblF_Max = null;
+            }
+            if (m_LinOverOblF_Avg != null)
+            {
+                m_LinOverOblF_Avg.Clear();
+                m_LinOverOblF_Avg = null;
+            }
+            if (m_LinOverOblF_Std != null)
+            {
+                m_LinOverOblF_Std.Clear();
+                m_LinOverOblF_Std = null;
+            }
+            if (m_LinOverOblL_Min != null)
+            {
+                m_LinOverOblL_Min.Clear();
+                m_LinOverOblL_Min = null;
+            }
+            if (m_LinOverOblL_Max != null)
+            {
+                m_LinOverOblL_Max.Clear();
+                m_LinOverOblL_Max = null;
+            }
+            if (m_LinOverOblL_Avg != null)
+            {
+                m_LinOverOblL_Avg.Clear();
+                m_LinOverOblL_Avg = null;
+            }
+            if (m_LinOverOblL_Std != null)
+            {
+                m_LinOverOblL_Std.Clear();
+                m_LinOverOblL_Std = null;
             }
         }
 
@@ -1325,6 +1407,14 @@ namespace AerialPhotoQC
             m_LinH_Max = new List<double>();
             m_LinH_Avg = new List<double>();
             m_LinH_Std = new List<double>();
+            m_LinOverOblF_Min = new List<double>();
+            m_LinOverOblF_Max = new List<double>();
+            m_LinOverOblF_Avg = new List<double>();
+            m_LinOverOblF_Std = new List<double>();
+            m_LinOverOblL_Min = new List<double>();
+            m_LinOverOblL_Max = new List<double>();
+            m_LinOverOblL_Avg = new List<double>();
+            m_LinOverOblL_Std = new List<double>();
 
             for (i = 0; i < Count; i++)
             {
@@ -1352,6 +1442,14 @@ namespace AerialPhotoQC
                 m_LinH_Max.Add(0.0);
                 m_LinH_Avg.Add(0.0);
                 m_LinH_Std.Add(0.0);
+                m_LinOverOblF_Min.Add(0.0);
+                m_LinOverOblF_Max.Add(0.0);
+                m_LinOverOblF_Avg.Add(0.0);
+                m_LinOverOblF_Std.Add(0.0);
+                m_LinOverOblL_Min.Add(0.0);
+                m_LinOverOblL_Max.Add(0.0);
+                m_LinOverOblL_Avg.Add(0.0);
+                m_LinOverOblL_Std.Add(0.0);
             }
             for (i = 0; i < Count; i++)
             {
@@ -1730,6 +1828,8 @@ namespace AerialPhotoQC
             m_PntHMax = new List<List<double>>();
             m_PntHAvg = new List<List<double>>();
             m_PntHStd = new List<List<double>>();
+            m_PntOverOblF = new List<List<double>>();
+            m_PntOverOblL = new List<List<double>>();
 
             LinCount = m_PntXs.Count;
             for (LinIdx = 0; LinIdx < LinCount; LinIdx++)
@@ -1753,6 +1853,8 @@ namespace AerialPhotoQC
                 m_PntHMax.Add(new List<double>());
                 m_PntHAvg.Add(new List<double>());
                 m_PntHStd.Add(new List<double>());
+                m_PntOverOblF.Add(new List<double>());
+                m_PntOverOblL.Add(new List<double>());
 
                 PntCount = m_PntXs[LinIdx].Count;
                 for (PntIdx = 0; PntIdx < PntCount; PntIdx++)
@@ -1776,6 +1878,8 @@ namespace AerialPhotoQC
                     m_PntHMax[LinIdx].Add(0.0);
                     m_PntHAvg[LinIdx].Add(0.0);
                     m_PntHStd[LinIdx].Add(0.0);
+                    m_PntOverOblF[LinIdx].Add(0.0);
+                    m_PntOverOblL[LinIdx].Add(0.0);
                 }
             }
         }

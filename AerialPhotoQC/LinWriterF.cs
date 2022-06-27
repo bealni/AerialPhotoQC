@@ -13,6 +13,7 @@ namespace AerialPhotoQC
         private String m_sInFileName;
         private String m_sOutFileName;
         private ShpInfoF m_Info;
+        private Cfg m_Cfg;
 
         ShpLib m_InSHP;
         ShpLib m_OutSHP;
@@ -63,11 +64,13 @@ namespace AerialPhotoQC
         /*=== Open() ===*/
         public String Open(String InFileName,
                            String OutFileName,
-                           ShpInfoF Info)
+                           ShpInfoF Info,
+                           Cfg cfg)
         {
             m_sInFileName = InFileName;
             m_sOutFileName = OutFileName;
             m_Info = Info;
+            m_Cfg = cfg;
 
             return DoOpen();
         }
@@ -167,6 +170,9 @@ namespace AerialPhotoQC
             int i;
 
             m_nOutFldCount = m_nInFldCount + 25;
+            if (m_Cfg.m_Data.ObliqueStats)
+                m_nOutFldCount += 8;
+
             m_OutFldIdxs = new int[m_nOutFldCount];
             for (i = 0; i < m_nOutFldCount; i++)
                 m_OutFldIdxs[i] = i;
@@ -178,6 +184,8 @@ namespace AerialPhotoQC
                               "OVRL_MIN|OVRL_MAX|OVRL_AVG|OVRL_STD|OVRT_MIN|OVRT_MAX|OVRT_AVG|OVRT_STD|" +
                               "GSDA_MIN|GSDA_MAX|GSDA_AVG|GSDA_STD|GSDAVG_MIN|GSDAVG_MAX|GSDAVG_AVG|GSDAVG_STD|" +
                               "HAVG_MIN|HAVG_MAX|HAVG_AVG|HAVG_STD";
+            if (m_Cfg.m_Data.ObliqueStats)
+                m_sOutFldNames += "|OVROF_MIN|OVROF_MAX|OVROF_AVG|OVROF_STD|OVROL_MIN|OVROL_MAX|OVROL_AVG|OVROL_STD";
             
             m_OutFldTypes = new char[256];
             for (FldIdx = 0; FldIdx < m_nInFldCount; FldIdx++)
@@ -207,6 +215,17 @@ namespace AerialPhotoQC
             m_OutFldTypes[m_nInFldCount + 22] = 'N';
             m_OutFldTypes[m_nInFldCount + 23] = 'N';
             m_OutFldTypes[m_nInFldCount + 24] = 'N';
+            if (m_Cfg.m_Data.ObliqueStats)
+            {
+                m_OutFldTypes[m_nInFldCount + 25] = 'N';
+                m_OutFldTypes[m_nInFldCount + 26] = 'N';
+                m_OutFldTypes[m_nInFldCount + 27] = 'N';
+                m_OutFldTypes[m_nInFldCount + 28] = 'N';
+                m_OutFldTypes[m_nInFldCount + 29] = 'N';
+                m_OutFldTypes[m_nInFldCount + 30] = 'N';
+                m_OutFldTypes[m_nInFldCount + 31] = 'N';
+                m_OutFldTypes[m_nInFldCount + 32] = 'N';
+            }
 
             m_OutFldLens = new int[256];
             m_OutFldDecs = new int[256];
@@ -265,6 +284,25 @@ namespace AerialPhotoQC
             m_OutFldDecs[m_nInFldCount + 23] = 2;
             m_OutFldLens[m_nInFldCount + 24] = 8;
             m_OutFldDecs[m_nInFldCount + 24] = 2;
+            if (m_Cfg.m_Data.ObliqueStats)
+            {
+                m_OutFldLens[m_nInFldCount + 25] = 8;
+                m_OutFldDecs[m_nInFldCount + 25] = 2;
+                m_OutFldLens[m_nInFldCount + 26] = 8;
+                m_OutFldDecs[m_nInFldCount + 26] = 2;
+                m_OutFldLens[m_nInFldCount + 27] = 8;
+                m_OutFldDecs[m_nInFldCount + 27] = 2;
+                m_OutFldLens[m_nInFldCount + 28] = 8;
+                m_OutFldDecs[m_nInFldCount + 28] = 2;
+                m_OutFldLens[m_nInFldCount + 29] = 8;
+                m_OutFldDecs[m_nInFldCount + 29] = 2;
+                m_OutFldLens[m_nInFldCount + 30] = 8;
+                m_OutFldDecs[m_nInFldCount + 30] = 2;
+                m_OutFldLens[m_nInFldCount + 31] = 8;
+                m_OutFldDecs[m_nInFldCount + 31] = 2;
+                m_OutFldLens[m_nInFldCount + 32] = 8;
+                m_OutFldDecs[m_nInFldCount + 32] = 2;
+            }
 
             m_OutSHP = new ShpLib();
             Res = m_OutSHP.CreateShape(m_sOutFileName,
@@ -296,6 +334,7 @@ namespace AerialPhotoQC
             m_sInFileName = "";
             m_sOutFileName = "";
             m_Info = null;
+            m_Cfg = null;
 
             if (m_InSHP != null)
             {
@@ -442,6 +481,18 @@ namespace AerialPhotoQC
                 FldVals += String.Format("{0:0.00}", m_Info.m_LinH_Max[RecIdx]) + "|";
                 FldVals += String.Format("{0:0.00}", m_Info.m_LinH_Avg[RecIdx]) + "|";
                 FldVals += String.Format("{0:0.00}", m_Info.m_LinH_Std[RecIdx]);
+                if (m_Cfg.m_Data.ObliqueStats)
+                {
+                    FldVals += "|";
+                    FldVals += String.Format("{0:0.00}", m_Info.m_LinOverOblF_Min[RecIdx]) + "|";
+                    FldVals += String.Format("{0:0.00}", m_Info.m_LinOverOblF_Max[RecIdx]) + "|";
+                    FldVals += String.Format("{0:0.00}", m_Info.m_LinOverOblF_Avg[RecIdx]) + "|";
+                    FldVals += String.Format("{0:0.00}", m_Info.m_LinOverOblF_Std[RecIdx]) + "|";
+                    FldVals += String.Format("{0:0.00}", m_Info.m_LinOverOblL_Min[RecIdx]) + "|";
+                    FldVals += String.Format("{0:0.00}", m_Info.m_LinOverOblL_Max[RecIdx]) + "|";
+                    FldVals += String.Format("{0:0.00}", m_Info.m_LinOverOblL_Avg[RecIdx]) + "|";
+                    FldVals += String.Format("{0:0.00}", m_Info.m_LinOverOblL_Std[RecIdx]);
+                }
 
                 Res = m_OutSHP.ShpLineZ_AddRecs(m_sOutFileName,
                     

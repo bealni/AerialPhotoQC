@@ -19,6 +19,7 @@ namespace AerialPhotoQC
         private const int DEF_MIN_LIN_DIST_HIGH = 1500;
         private const int DEF_MAX_LIN_DIST_HIGH = 2500;
 
+        private Cfg m_Cfg;
         private ShpInfoF m_ShpInfo;
         private DTMInfoF m_DTMInfo;
         private PRJInfo m_PRJInfo;
@@ -28,7 +29,8 @@ namespace AerialPhotoQC
 
         public delegate void OnBeforeStartedFHandler();
         public OnBeforeStartedFHandler OnBeforeStartedF;
-        public delegate void OnFinishedFHandler(String ImgsFile,
+        public delegate void OnFinishedFHandler(bool IsObliqueStats,
+                                                String ImgsFile,
                                                 String PolyFile,
                                                 StatsF S);
         public OnFinishedFHandler OnFinishedF;
@@ -38,6 +40,7 @@ namespace AerialPhotoQC
         {
             InitializeComponent();
 
+            m_Cfg = null;
             m_ShpInfo = null;
             m_DTMInfo = null;
             m_PRJInfo = null;
@@ -49,6 +52,12 @@ namespace AerialPhotoQC
             OnFinishedF = null;
 
             DefLinDistCB.SelectedIndex = 0;
+        }
+
+        /*=== Open() ===*/
+        public void Open(Cfg cfg)
+        {
+            m_Cfg = cfg;
         }
 
         /*=== InputFCtrl_Resize() ===*/
@@ -353,7 +362,8 @@ namespace AerialPhotoQC
             this.Cursor = Cursors.WaitCursor;
 
             m_Stats = new StatsF();
-            Res = m_Stats.Open(m_ShpInfo,
+            Res = m_Stats.Open(m_Cfg,
+                               m_ShpInfo,
                                m_DTMInfo,
                                m_MonoModel,
                                GSDGridSize,
@@ -388,7 +398,8 @@ namespace AerialPhotoQC
             Res = LW.Open(m_ShpInfo.m_sLinFileName,
                             Path.GetDirectoryName(m_ShpInfo.m_sLinFileName) + "\\" +
                             Path.GetFileNameWithoutExtension(m_ShpInfo.m_sLinFileName) + "_Stats.shp",
-                            m_ShpInfo);
+                            m_ShpInfo,
+                            m_Cfg);
             if (Res != "OK")
             {
                 ProcL.Text = "";
@@ -420,7 +431,8 @@ namespace AerialPhotoQC
             Res = PW.Open(m_ShpInfo.m_sPntFileName,
                           Path.GetDirectoryName(m_ShpInfo.m_sPntFileName) + "\\" +
                           Path.GetFileNameWithoutExtension(m_ShpInfo.m_sPntFileName) + "_Stats.shp",
-                          m_ShpInfo);
+                          m_ShpInfo,
+                          m_Cfg);
             if (Res != "OK")
             {
                 ProcL.Text = "";
@@ -453,7 +465,8 @@ namespace AerialPhotoQC
                           Path.GetFileNameWithoutExtension(m_ShpInfo.m_sPntFileName) + ".prj",
                           Path.GetDirectoryName(m_ShpInfo.m_sPntFileName) + "\\" +
                           Path.GetFileNameWithoutExtension(m_ShpInfo.m_sPntFileName) + "_Imgs.shp",
-                          m_ShpInfo);
+                          m_ShpInfo,
+                          m_Cfg);
             if (Res != "OK")
             {
                 ProcL.Text = "";
@@ -483,7 +496,8 @@ namespace AerialPhotoQC
             this.Cursor = Cursors.Default;
             if (OnFinishedF != null)
             {
-                OnFinishedF(Path.GetDirectoryName(m_ShpInfo.m_sPntFileName) + "\\" +
+                OnFinishedF(m_Cfg.m_Data.ObliqueStats,
+                            Path.GetDirectoryName(m_ShpInfo.m_sPntFileName) + "\\" +
                             Path.GetFileNameWithoutExtension(m_ShpInfo.m_sPntFileName) + "_Imgs.shp",
                             PrjPolyTB.Text,
                             m_Stats);

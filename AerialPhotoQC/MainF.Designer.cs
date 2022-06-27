@@ -31,18 +31,21 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainF));
             this.MainTC = new System.Windows.Forms.TabControl();
             this.InputTP = new System.Windows.Forms.TabPage();
-            this.InputFTP = new System.Windows.Forms.TabPage();
-            this.StatsTP = new System.Windows.Forms.TabPage();
-            this.ViewerTP = new System.Windows.Forms.TabPage();
             this.Input_Ctrl = new AerialPhotoQC.InputCtrl();
+            this.InputFTP = new System.Windows.Forms.TabPage();
             this.InputF_Ctrl = new AerialPhotoQC.InputFCtrl();
+            this.StatsTP = new System.Windows.Forms.TabPage();
             this.Stats_Ctrl = new AerialPhotoQC.StatsCtrl();
+            this.ViewerTP = new System.Windows.Forms.TabPage();
             this.Viewer_Ctrl = new AerialPhotoQC.ViewerCtrl();
+            this.ObliqueSimTP = new System.Windows.Forms.TabPage();
+            this.ObliqueSim_Ctrl = new AerialPhotoQC.ObliqueSimCtrl();
             this.MainTC.SuspendLayout();
             this.InputTP.SuspendLayout();
             this.InputFTP.SuspendLayout();
             this.StatsTP.SuspendLayout();
             this.ViewerTP.SuspendLayout();
+            this.ObliqueSimTP.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainTC
@@ -51,6 +54,7 @@
             this.MainTC.Controls.Add(this.InputFTP);
             this.MainTC.Controls.Add(this.StatsTP);
             this.MainTC.Controls.Add(this.ViewerTP);
+            this.MainTC.Controls.Add(this.ObliqueSimTP);
             this.MainTC.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainTC.Location = new System.Drawing.Point(0, 0);
             this.MainTC.Name = "MainTC";
@@ -69,6 +73,14 @@
             this.InputTP.TabIndex = 0;
             this.InputTP.Text = "Plan";
             // 
+            // Input_Ctrl
+            // 
+            this.Input_Ctrl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Input_Ctrl.Location = new System.Drawing.Point(3, 3);
+            this.Input_Ctrl.Name = "Input_Ctrl";
+            this.Input_Ctrl.Size = new System.Drawing.Size(768, 518);
+            this.Input_Ctrl.TabIndex = 0;
+            // 
             // InputFTP
             // 
             this.InputFTP.BackColor = System.Drawing.SystemColors.Control;
@@ -79,6 +91,14 @@
             this.InputFTP.Size = new System.Drawing.Size(774, 524);
             this.InputFTP.TabIndex = 1;
             this.InputFTP.Text = "Flight";
+            // 
+            // InputF_Ctrl
+            // 
+            this.InputF_Ctrl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.InputF_Ctrl.Location = new System.Drawing.Point(3, 3);
+            this.InputF_Ctrl.Name = "InputF_Ctrl";
+            this.InputF_Ctrl.Size = new System.Drawing.Size(768, 518);
+            this.InputF_Ctrl.TabIndex = 0;
             // 
             // StatsTP
             // 
@@ -91,6 +111,14 @@
             this.StatsTP.TabIndex = 2;
             this.StatsTP.Text = "Statistics";
             // 
+            // Stats_Ctrl
+            // 
+            this.Stats_Ctrl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Stats_Ctrl.Location = new System.Drawing.Point(3, 3);
+            this.Stats_Ctrl.Name = "Stats_Ctrl";
+            this.Stats_Ctrl.Size = new System.Drawing.Size(768, 518);
+            this.Stats_Ctrl.TabIndex = 0;
+            // 
             // ViewerTP
             // 
             this.ViewerTP.BackColor = System.Drawing.SystemColors.Control;
@@ -102,30 +130,6 @@
             this.ViewerTP.TabIndex = 3;
             this.ViewerTP.Text = "Viewer";
             // 
-            // Input_Ctrl
-            // 
-            this.Input_Ctrl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Input_Ctrl.Location = new System.Drawing.Point(3, 3);
-            this.Input_Ctrl.Name = "Input_Ctrl";
-            this.Input_Ctrl.Size = new System.Drawing.Size(768, 518);
-            this.Input_Ctrl.TabIndex = 0;
-            // 
-            // InputF_Ctrl
-            // 
-            this.InputF_Ctrl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.InputF_Ctrl.Location = new System.Drawing.Point(3, 3);
-            this.InputF_Ctrl.Name = "InputF_Ctrl";
-            this.InputF_Ctrl.Size = new System.Drawing.Size(768, 518);
-            this.InputF_Ctrl.TabIndex = 0;
-            // 
-            // Stats_Ctrl
-            // 
-            this.Stats_Ctrl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Stats_Ctrl.Location = new System.Drawing.Point(3, 3);
-            this.Stats_Ctrl.Name = "Stats_Ctrl";
-            this.Stats_Ctrl.Size = new System.Drawing.Size(768, 518);
-            this.Stats_Ctrl.TabIndex = 0;
-            // 
             // Viewer_Ctrl
             // 
             this.Viewer_Ctrl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -133,6 +137,25 @@
             this.Viewer_Ctrl.Name = "Viewer_Ctrl";
             this.Viewer_Ctrl.Size = new System.Drawing.Size(768, 518);
             this.Viewer_Ctrl.TabIndex = 0;
+            // 
+            // ObliqueSimTP
+            // 
+            this.ObliqueSimTP.BackColor = System.Drawing.SystemColors.Control;
+            this.ObliqueSimTP.Controls.Add(this.ObliqueSim_Ctrl);
+            this.ObliqueSimTP.Location = new System.Drawing.Point(4, 25);
+            this.ObliqueSimTP.Name = "ObliqueSimTP";
+            this.ObliqueSimTP.Padding = new System.Windows.Forms.Padding(3);
+            this.ObliqueSimTP.Size = new System.Drawing.Size(774, 524);
+            this.ObliqueSimTP.TabIndex = 4;
+            this.ObliqueSimTP.Text = "Oblique Illustrator";
+            // 
+            // ObliqueSim_Ctrl
+            // 
+            this.ObliqueSim_Ctrl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ObliqueSim_Ctrl.Location = new System.Drawing.Point(3, 3);
+            this.ObliqueSim_Ctrl.Name = "ObliqueSim_Ctrl";
+            this.ObliqueSim_Ctrl.Size = new System.Drawing.Size(768, 518);
+            this.ObliqueSim_Ctrl.TabIndex = 0;
             // 
             // MainF
             // 
@@ -142,13 +165,14 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "MainF";
-            this.Text = "Aerial Photo Quality Control, Version 2.5 (2022/05/04 12:00)";
+            this.Text = "Aerial Photo Quality Control, Version 2.6 (2022/06/27 13:00)";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.MainTC.ResumeLayout(false);
             this.InputTP.ResumeLayout(false);
             this.InputFTP.ResumeLayout(false);
             this.StatsTP.ResumeLayout(false);
             this.ViewerTP.ResumeLayout(false);
+            this.ObliqueSimTP.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -164,6 +188,8 @@
         private InputFCtrl InputF_Ctrl;
         private StatsCtrl Stats_Ctrl;
         private ViewerCtrl Viewer_Ctrl;
+        private System.Windows.Forms.TabPage ObliqueSimTP;
+        private ObliqueSimCtrl ObliqueSim_Ctrl;
     }
 }
 

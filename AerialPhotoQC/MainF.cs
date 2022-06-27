@@ -6,24 +6,43 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace AerialPhotoQC
 {
     public partial class MainF : Form
     {
+        private const String CFG_NAME = "Cfg.json";
+
+        private String m_sExePath;
+
+        private Cfg m_Cfg;
+
         /*=== MainF() ===*/
         public MainF()
         {
             InitializeComponent();
 
+            m_sExePath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+
+            m_Cfg = new Cfg();
+            if (!File.Exists(m_sExePath + "\\" + CFG_NAME))
+                m_Cfg.Open(m_sExePath + "\\" + CFG_NAME, true);
+            else
+                m_Cfg.Open(m_sExePath + "\\" + CFG_NAME, false);
+
+            Input_Ctrl.Open(m_Cfg);
             Input_Ctrl.OnBeforeStarted += new InputCtrl.OnBeforeStartedHandler(OnInputCtrlBeforeStarted);
             Input_Ctrl.OnFinished += new InputCtrl.OnFinishedHandler(OnInputCtrlFinished);
 
+            InputF_Ctrl.Open(m_Cfg);
             InputF_Ctrl.OnBeforeStartedF += new InputFCtrl.OnBeforeStartedFHandler(OnInputCtrlBeforeStartedF);
             InputF_Ctrl.OnFinishedF += new InputFCtrl.OnFinishedFHandler(OnInputCtrlFinishedF);
 
             Stats_Ctrl.OnStatsLoaded += new StatsCtrl.OnStatsLoadedHandler(OnStatsCtrlLoaded);
             Stats_Ctrl.OnStatsCleared += new StatsCtrl.OnStatsClearedHandler(OnStatsCtrlCleared);
+
+            ObliqueSim_Ctrl.Open(m_Cfg);
         }
 
         /*=== OnInputCtrlBeforeStarted() ===*/
@@ -34,14 +53,18 @@ namespace AerialPhotoQC
         }
 
         /*=== OnInputCtrlFinished() ===*/
-        private void OnInputCtrlFinished(String sImgsFile,
+        private void OnInputCtrlFinished(bool IsObliqueStats,
+                                         String sImgsFile,
                                          String sPolyFile,
                                          Stats S)
         {
-            Stats_Ctrl.SetStats(sImgsFile,
+            Stats_Ctrl.SetStats(IsObliqueStats,
+                                sImgsFile,
                                 sPolyFile,
                                 S);
             Viewer_Ctrl.SetStats(false,
+                                 IsObliqueStats,
+
                                  sImgsFile,
                                  sPolyFile,
 
@@ -52,7 +75,13 @@ namespace AerialPhotoQC
                                  S.m_nStats_OverTrs_Std,
 
                                  S.m_nStats_GSD_Avg,
-                                 S.m_nStats_GSD_Std);
+                                 S.m_nStats_GSD_Std,
+                                 
+                                 S.m_nStats_OverOblF_Avg,
+                                 S.m_nStats_OverOblF_Std,
+
+                                 S.m_nStats_OverOblL_Avg,
+                                 S.m_nStats_OverOblL_Std);
         }
 
         /*=== OnInputCtrlBeforeStartedF() ===*/
@@ -63,14 +92,18 @@ namespace AerialPhotoQC
         }
 
         /*=== OnInputCtrlFinishedF() ===*/
-        private void OnInputCtrlFinishedF(String sImgsFile,
+        private void OnInputCtrlFinishedF(bool IsObliqueStats,
+                                          String sImgsFile,
                                           String sPolyFile,
                                           StatsF S)
         {
-            Stats_Ctrl.SetStatsF(sImgsFile,
+            Stats_Ctrl.SetStatsF(IsObliqueStats,
+                                 sImgsFile,
                                  sPolyFile,
                                  S);
             Viewer_Ctrl.SetStats(true,
+                                 IsObliqueStats,
+
                                  sImgsFile,
                                  sPolyFile,
 
@@ -81,7 +114,13 @@ namespace AerialPhotoQC
                                  S.m_nStats_OverTrs_Std,
 
                                  S.m_nStats_GSD_Avg,
-                                 S.m_nStats_GSD_Std);
+                                 S.m_nStats_GSD_Std,
+                                 
+                                 S.m_nStats_OverOblF_Avg,
+                                 S.m_nStats_OverOblF_Std,
+
+                                 S.m_nStats_OverOblL_Avg,
+                                 S.m_nStats_OverOblL_Std);
         }
 
         /*=== OnStatsCtrlCleared() ===*/
@@ -92,6 +131,7 @@ namespace AerialPhotoQC
 
         /*=== OnStatsCtrlLoaded() ===*/
         private void OnStatsCtrlLoaded(bool IsFlight,
+                                       bool IsObliqueStats,
 
                                        String ImgsFile,
                                        String PolyFile,
@@ -103,9 +143,17 @@ namespace AerialPhotoQC
                                        double OverTrs_Std,
 
                                        double GSD_Avg,
-                                       double GSD_Std)
+                                       double GSD_Std,
+            
+                                       double OverOblF_Avg,
+                                       double OverOblF_Std,
+
+                                       double OverOblL_Avg,
+                                       double OverOblL_Std)
         {
             Viewer_Ctrl.SetStats(IsFlight,
+                                 IsObliqueStats,
+
                                  ImgsFile,
                                  PolyFile,
 
@@ -116,7 +164,13 @@ namespace AerialPhotoQC
                                  OverTrs_Std,
 
                                  GSD_Avg,
-                                 GSD_Std);
+                                 GSD_Std,
+                                 
+                                 OverOblF_Avg,
+                                 OverOblF_Std,
+
+                                 OverOblL_Avg,
+                                 OverOblL_Std);
         }
     }
 }

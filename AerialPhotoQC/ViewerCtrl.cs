@@ -15,6 +15,8 @@ namespace AerialPhotoQC
         private const String OVER_LON_FLD_NAME = "OVR_LON";
         private const String OVER_TRS_FLD_NAME = "OVR_TRS";
         private const String GSD_FLD_NAME = "GSD_AVG";
+        private const String OVER_OBLF_FLD_NAME = "OVROBL_F";
+        private const String OVER_OBLL_FLD_NAME = "OVROBL_L";
         private const String ELEVATION_FLD_NAME = "ELEVATION";
 
         private const double OVER_LON_MIN_LOW = 65.0;
@@ -23,6 +25,10 @@ namespace AerialPhotoQC
         private const double OVER_TRS_MAX_LOW = 100.0001;
         private const double GSD_MIN_LOW = 7.0;
         private const double GSD_MAX_LOW = 9.0;
+        private const double OVER_OBLF_MIN_LOW = 60.0;
+        private const double OVER_OBLF_MAX_LOW = 100.0001;
+        private const double OVER_OBLL_MIN_LOW = 60.0;
+        private const double OVER_OBLL_MAX_LOW = 100.0001;
 
         private const double OVER_LON_MIN_HIGH = 65.0;
         private const double OVER_LON_MAX_HIGH = 75.0;
@@ -30,10 +36,15 @@ namespace AerialPhotoQC
         private const double OVER_TRS_MAX_HIGH = 100.0001;
         private const double GSD_MIN_HIGH = 17.0;
         private const double GSD_MAX_HIGH = 23.0;
+        private const double OVER_OBLF_MIN_HIGH = 60.0;
+        private const double OVER_OBLF_MAX_HIGH = 100.0001;
+        private const double OVER_OBLL_MIN_HIGH = 60.0;
+        private const double OVER_OBLL_MAX_HIGH = 100.0001;
 
         private const int MOUSE_DELTA = 5;
 
         private bool m_bIsFlight;
+        private bool m_bIsObliqueStats;
 
         private String m_sImgsFile;
         private String m_sPolyFile;
@@ -47,6 +58,12 @@ namespace AerialPhotoQC
         private double m_nGSD_Avg;
         private double m_nGSD_Std;
 
+        private double m_nOverOblF_Avg;
+        private double m_nOverOblF_Std;
+
+        private double m_nOverOblL_Avg;
+        private double m_nOverOblL_Std;
+
         private bool m_bStatsExist;
 
         private List<double> m_CXs;
@@ -58,6 +75,8 @@ namespace AerialPhotoQC
         private List<double> m_OverLon;
         private List<double> m_OverTrs;
         private List<double> m_GSD;
+        private List<double> m_OverOblF;
+        private List<double> m_OverOblL;
 
         double m_nMinX;
         double m_nMinY;
@@ -118,6 +137,8 @@ namespace AerialPhotoQC
             m_OverLon = null;
             m_OverTrs = null;
             m_GSD = null;
+            m_OverOblF = null;
+            m_OverOblL = null;
 
             m_PXs = null;
             m_PYs = null;
@@ -147,6 +168,7 @@ namespace AerialPhotoQC
 
         /*=== SetStats() ===*/
         public void SetStats(bool IsFlight,
+                             bool IsObliqueStats,
             
                              String ImgsFile,
                              String PolyFile,
@@ -158,13 +180,37 @@ namespace AerialPhotoQC
                              double OverTrs_Std,
 
                              double GSD_Avg,
-                             double GSD_Std)
+                             double GSD_Std,
+            
+                             double OverOblF_Avg,
+                             double OverOblF_Std,
+
+                             double OverOblL_Avg,
+                             double OverOblL_Std)
         {
             String Res;
 
             ClearStats();
 
             m_bIsFlight = IsFlight;
+            m_bIsObliqueStats = IsObliqueStats;
+
+            if (m_bIsObliqueStats)
+            {
+                if (VarCB.Items.Count == 3)
+                {
+                    VarCB.Items.Add("Obl Frontal Overlap, %");
+                    VarCB.Items.Add("Obl Lateral Overlap, %");
+                }
+            }
+            else
+            {
+                if (VarCB.Items.Count == 5)
+                {
+                    VarCB.Items.RemoveAt(4);
+                    VarCB.Items.RemoveAt(3);
+                }
+            }
 
             m_sImgsFile = ImgsFile;
             m_sPolyFile = PolyFile;
@@ -181,6 +227,12 @@ namespace AerialPhotoQC
 
             m_nGSD_Avg = GSD_Avg;
             m_nGSD_Std = GSD_Std;
+
+            m_nOverOblF_Avg = OverOblF_Avg;
+            m_nOverOblF_Std = OverOblF_Std;
+
+            m_nOverOblL_Avg = OverOblL_Avg;
+            m_nOverOblL_Std = OverOblL_Std;
 
             Res = LoadInfo();
             if (Res != "OK")
@@ -226,6 +278,7 @@ namespace AerialPhotoQC
             MainDP.Invalidate();
 
             m_bIsFlight = false;
+            m_bIsObliqueStats = false;
 
             m_sImgsFile = "";
             m_sPolyFile = "";
@@ -238,6 +291,12 @@ namespace AerialPhotoQC
 
             m_nGSD_Avg = 0.0;
             m_nGSD_Std = 0.0;
+
+            m_nOverOblF_Avg = 0.0;
+            m_nOverOblF_Std = 0.0;
+
+            m_nOverOblL_Avg = 0.0;
+            m_nOverOblL_Std = 0.0;
 
             if (m_CXs != null)
             {
@@ -293,6 +352,16 @@ namespace AerialPhotoQC
             {
                 m_GSD.Clear();
                 m_GSD = null;
+            }
+            if (m_OverOblF != null)
+            {
+                m_OverOblF.Clear();
+                m_OverOblF = null;
+            }
+            if (m_OverOblL != null)
+            {
+                m_OverOblL.Clear();
+                m_OverOblL = null;
             }
 
             m_nMinX = 0.0;
@@ -805,6 +874,8 @@ namespace AerialPhotoQC
             int OverLon_FldIdx = -1;
             int OverTrs_FldIdx = -1;
             int GSD_FldIdx = -1;
+            int OverOblF_FldIdx = -1;
+            int OverOblL_FldIdx = -1;
 
             bool FirstGot = false;
 
@@ -821,8 +892,8 @@ namespace AerialPhotoQC
 
             double X, Y, Z;
 
-            String sOverLon, sOverTrs, sGSD;
-            double OverLon, OverTrs, GSD;
+            String sOverLon, sOverTrs, sGSD, sOverOblF, sOverOblL;
+            double OverLon, OverTrs, GSD, OverOblF = 0.0, OverOblL = 0.0;
 
             //=============//
             // Read Header //
@@ -877,6 +948,12 @@ namespace AerialPhotoQC
                 else
                 if (FldNames[FldIdx].ToUpper() == GSD_FLD_NAME)
                     GSD_FldIdx = FldIdx;
+                else
+                if (FldNames[FldIdx].ToUpper() == OVER_OBLF_FLD_NAME)
+                    OverOblF_FldIdx = FldIdx;
+                else
+                if (FldNames[FldIdx].ToUpper() == OVER_OBLL_FLD_NAME)
+                    OverOblL_FldIdx = FldIdx;
             }
             if (OverLon_FldIdx == -1)
             {
@@ -911,6 +988,31 @@ namespace AerialPhotoQC
                 SHP = null;
                 return "Error Opening Footprints: Field '" + GSD_FLD_NAME + "' does not exist.";
             }
+            if (m_bIsObliqueStats)
+            {
+                if (OverOblF_FldIdx == -1)
+                {
+                    FldNames = null;
+                    FldTypes = null;
+                    FldLens = null;
+                    FldDecs = null;
+                    SHP.GetShpInfo_Stop();
+                    SHP.Dispose();
+                    SHP = null;
+                    return "Error Opening Footprints: Field '" + OVER_OBLF_FLD_NAME + "' does not exist.";
+                }
+                if (OverOblL_FldIdx == -1)
+                {
+                    FldNames = null;
+                    FldTypes = null;
+                    FldLens = null;
+                    FldDecs = null;
+                    SHP.GetShpInfo_Stop();
+                    SHP.Dispose();
+                    SHP = null;
+                    return "Error Opening Footprints: Field '" + OVER_OBLL_FLD_NAME + "' does not exist.";
+                }
+            }
 
             //=================//
             // Read Footprints //
@@ -926,6 +1028,8 @@ namespace AerialPhotoQC
             m_OverLon = new List<double>();
             m_OverTrs = new List<double>();
             m_GSD = new List<double>();
+            m_OverOblF = new List<double>();
+            m_OverOblL = new List<double>();
 
             Res = SHP.GetShpInfo_StartZ(m_sImgsFile,
                                         double.MinValue,
@@ -1050,6 +1154,41 @@ namespace AerialPhotoQC
                     Parts = null;
                     return "Error Reading Footprints: Field '" + GSD_FLD_NAME + "' is not a real number.";
                 }
+                if (m_bIsObliqueStats)
+                {
+                    sOverOblF = SHP.GetShpInfo_DBF(OverOblF_FldIdx);
+                    if (!double.TryParse(sOverOblF, out OverOblF))
+                    {
+                        FldNames = null;
+                        FldTypes = null;
+                        FldLens = null;
+                        FldDecs = null;
+                        SHP.GetShpInfo_Stop();
+                        SHP.Dispose();
+                        SHP = null;
+                        PntsX = null;
+                        PntsY = null;
+                        PntsZ = null;
+                        Parts = null;
+                        return "Error Reading Footprints: Field '" + OVER_OBLF_FLD_NAME + "' is not a real number.";
+                    }
+                    sOverOblL = SHP.GetShpInfo_DBF(OverOblL_FldIdx);
+                    if (!double.TryParse(sOverOblL, out OverOblL))
+                    {
+                        FldNames = null;
+                        FldTypes = null;
+                        FldLens = null;
+                        FldDecs = null;
+                        SHP.GetShpInfo_Stop();
+                        SHP.Dispose();
+                        SHP = null;
+                        PntsX = null;
+                        PntsY = null;
+                        PntsZ = null;
+                        Parts = null;
+                        return "Error Reading Footprints: Field '" + OVER_OBLL_FLD_NAME + "' is not a real number.";
+                    }
+                }
 
                 m_Xs.Add(new double[4]);
                 m_Ys.Add(new double[4]);
@@ -1058,6 +1197,16 @@ namespace AerialPhotoQC
                 m_OverLon.Add(OverLon);
                 m_OverTrs.Add(OverTrs);
                 m_GSD.Add(GSD);
+                if (m_bIsObliqueStats)
+                {
+                    m_OverOblF.Add(OverOblF);
+                    m_OverOblL.Add(OverOblL);
+                }
+                else
+                {
+                    m_OverOblF.Add(0.0);
+                    m_OverOblL.Add(0.0);
+                }
 
                 for (PntIdx = 0; PntIdx < 4; PntIdx++)
                 {
@@ -1304,7 +1453,7 @@ namespace AerialPhotoQC
         private void VarCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             double zc, z1, z2, z3, z4, zavg, height;
-            String val;
+            String val = "";
 
             if (LowHighCB.SelectedIndex == 0)
             {
@@ -1314,7 +1463,14 @@ namespace AerialPhotoQC
                 if (VarCB.SelectedIndex == 1)
                     CritCB.Items[1] = "Limits " + String.Format("[{0:0}, {1:0}]%", OVER_TRS_MIN_LOW, OVER_TRS_MAX_LOW);
                 else
+                if (VarCB.SelectedIndex == 2)
                     CritCB.Items[1] = "Limits " + String.Format("[{0:0}, {1:0}]cm", GSD_MIN_LOW, GSD_MAX_LOW);
+                else
+                if (VarCB.SelectedIndex == 3)
+                    CritCB.Items[1] = "Limits " + String.Format("[{0:0}, {1:0}]%", OVER_OBLF_MIN_LOW, OVER_OBLF_MAX_LOW);
+                else
+                if (VarCB.SelectedIndex == 4)
+                    CritCB.Items[1] = "Limits " + String.Format("[{0:0}, {1:0}]%", OVER_OBLL_MIN_LOW, OVER_OBLL_MAX_LOW);
             }
             else
             {
@@ -1324,7 +1480,14 @@ namespace AerialPhotoQC
                 if (VarCB.SelectedIndex == 1)
                     CritCB.Items[1] = "Limits " + String.Format("[{0:0}, {1:0}]%", OVER_TRS_MIN_HIGH, OVER_TRS_MAX_HIGH);
                 else
+                if (VarCB.SelectedIndex == 2)
                     CritCB.Items[1] = "Limits " + String.Format("[{0:0}, {1:0}]cm", GSD_MIN_HIGH, GSD_MAX_HIGH);
+                else
+                if (VarCB.SelectedIndex == 3)
+                    CritCB.Items[1] = "Limits " + String.Format("[{0:0}, {1:0}]%", OVER_OBLF_MIN_HIGH, OVER_OBLF_MAX_HIGH);
+                else
+                if (VarCB.SelectedIndex == 4)
+                    CritCB.Items[1] = "Limits " + String.Format("[{0:0}, {1:0}]%", OVER_OBLL_MIN_HIGH, OVER_OBLL_MAX_HIGH);
             }
 
             if (m_nSelIdx != -1 && m_bStatsExist)
@@ -1343,7 +1506,14 @@ namespace AerialPhotoQC
                 if (VarCB.SelectedIndex == 1)
                     val = String.Format("{0:0.00}%", m_OverTrs[m_nSelIdx]);
                 else
+                if (VarCB.SelectedIndex == 2)
                     val = String.Format("{0:0.00}cm", m_GSD[m_nSelIdx]);
+                else
+                if (VarCB.SelectedIndex == 3)
+                    val = String.Format("{0:0.00}%", m_OverOblF[m_nSelIdx]);
+                else
+                if (VarCB.SelectedIndex == 4)
+                    val = String.Format("{0:0.00}%", m_OverOblL[m_nSelIdx]);
 
                 InfoSL.Text = String.Format("Z = {0:0.00}, Height = {1:0.00} " +
                                             "(zavg = {2:0.00}, zs = ({3:0.00}, {4:0.00}, {5:0.00}, {6:0.00})) " +
@@ -2024,6 +2194,7 @@ namespace AerialPhotoQC
                     }
                 }
                 else
+                if (VarCB.SelectedIndex == 2)
                 {
                     if (m_GSD[Idx] >= m_nGSD_Avg - 2.0 * m_nGSD_Std &&
                         m_GSD[Idx] <= m_nGSD_Avg + 2.0 * m_nGSD_Std)
@@ -2047,6 +2218,76 @@ namespace AerialPhotoQC
                     }
                     else
                     if (m_GSD[Idx] > 0)
+                    {
+                        p = m_PenRed;
+                        pdash = m_DashPenRed;
+                    }
+                    else
+                    {
+                        p = m_PenGray;
+                        pdash = m_DashPenGray;
+                    }
+                }
+                else
+                if (VarCB.SelectedIndex == 3)
+                {
+                    if (m_OverOblF[Idx] >= m_nOverOblF_Avg - 2.0 * m_nOverOblF_Std &&
+                        m_OverOblF[Idx] <= m_nOverOblF_Avg + 2.0 * m_nOverOblF_Std)
+                    {
+                        p = m_PenGreen;
+                        pdash = m_DashPenGreen;
+                    }
+                    else
+                    if (m_OverOblF[Idx] >= m_nOverOblF_Avg - 2.5 * m_nOverOblF_Std &&
+                        m_OverOblF[Idx] <= m_nOverOblF_Avg + 2.5 * m_nOverOblF_Std)
+                    {
+                        p = m_PenBlue;
+                        pdash = m_DashPenBlue;
+                    }
+                    else
+                    if (m_OverOblF[Idx] >= m_nOverOblF_Avg - 3.0 * m_nOverOblF_Std &&
+                        m_OverOblF[Idx] <= m_nOverOblF_Avg + 3.0 * m_nOverOblF_Std)
+                    {
+                        p = m_PenBrown;
+                        pdash = m_DashPenBrown;
+                    }
+                    else
+                    if (m_OverOblF[Idx] > 0)
+                    {
+                        p = m_PenRed;
+                        pdash = m_DashPenRed;
+                    }
+                    else
+                    {
+                        p = m_PenGray;
+                        pdash = m_DashPenGray;
+                    }
+                }
+                else
+                if (VarCB.SelectedIndex == 4)
+                {
+                    if (m_OverOblL[Idx] >= m_nOverOblL_Avg - 2.0 * m_nOverOblL_Std &&
+                        m_OverOblL[Idx] <= m_nOverOblL_Avg + 2.0 * m_nOverOblL_Std)
+                    {
+                        p = m_PenGreen;
+                        pdash = m_DashPenGreen;
+                    }
+                    else
+                    if (m_OverOblL[Idx] >= m_nOverOblL_Avg - 2.5 * m_nOverOblL_Std &&
+                        m_OverOblL[Idx] <= m_nOverOblL_Avg + 2.5 * m_nOverOblL_Std)
+                    {
+                        p = m_PenBlue;
+                        pdash = m_DashPenBlue;
+                    }
+                    else
+                    if (m_OverOblL[Idx] >= m_nOverOblL_Avg - 3.0 * m_nOverOblL_Std &&
+                        m_OverOblL[Idx] <= m_nOverOblL_Avg + 3.0 * m_nOverOblL_Std)
+                    {
+                        p = m_PenBrown;
+                        pdash = m_DashPenBrown;
+                    }
+                    else
+                    if (m_OverOblL[Idx] > 0)
                     {
                         p = m_PenRed;
                         pdash = m_DashPenRed;
@@ -2104,6 +2345,7 @@ namespace AerialPhotoQC
                         }
                     }
                     else
+                    if (VarCB.SelectedIndex == 2)
                     {
                         if (m_GSD[Idx] >= GSD_MIN_LOW &&
                             m_GSD[Idx] <= GSD_MAX_LOW)
@@ -2113,6 +2355,48 @@ namespace AerialPhotoQC
                         }
                         else
                         if (m_GSD[Idx] > 0)
+                        {
+                            p = m_PenRed;
+                            pdash = m_DashPenRed;
+                        }
+                        else
+                        {
+                            p = m_PenGray;
+                            pdash = m_DashPenGray;
+                        }
+                    }
+                    else
+                    if (VarCB.SelectedIndex == 3)
+                    {
+                        if (m_OverOblF[Idx] >= OVER_OBLF_MIN_LOW &&
+                            m_OverOblF[Idx] <= OVER_OBLF_MAX_LOW)
+                        {
+                            p = m_PenGreen;
+                            pdash = m_DashPenGreen;
+                        }
+                        else
+                        if (m_OverOblF[Idx] > 0)
+                        {
+                            p = m_PenRed;
+                            pdash = m_DashPenRed;
+                        }
+                        else
+                        {
+                            p = m_PenGray;
+                            pdash = m_DashPenGray;
+                        }
+                    }
+                    else
+                    if (VarCB.SelectedIndex == 4)
+                    {
+                        if (m_OverOblL[Idx] >= OVER_OBLL_MIN_LOW &&
+                            m_OverOblL[Idx] <= OVER_OBLL_MAX_LOW)
+                        {
+                            p = m_PenGreen;
+                            pdash = m_DashPenGreen;
+                        }
+                        else
+                        if (m_OverOblL[Idx] > 0)
                         {
                             p = m_PenRed;
                             pdash = m_DashPenRed;
@@ -2168,6 +2452,7 @@ namespace AerialPhotoQC
                         }
                     }
                     else
+                    if (VarCB.SelectedIndex == 2)
                     {
                         if (m_GSD[Idx] >= GSD_MIN_HIGH &&
                             m_GSD[Idx] <= GSD_MAX_HIGH)
@@ -2177,6 +2462,48 @@ namespace AerialPhotoQC
                         }
                         else
                         if (m_GSD[Idx] > 0)
+                        {
+                            p = m_PenRed;
+                            pdash = m_DashPenRed;
+                        }
+                        else
+                        {
+                            p = m_PenGray;
+                            pdash = m_DashPenGray;
+                        }
+                    }
+                    else
+                    if (VarCB.SelectedIndex == 3)
+                    {
+                        if (m_OverOblF[Idx] >= OVER_OBLF_MIN_HIGH &&
+                            m_OverOblF[Idx] <= OVER_OBLF_MAX_HIGH)
+                        {
+                            p = m_PenGreen;
+                            pdash = m_DashPenGreen;
+                        }
+                        else
+                        if (m_OverOblF[Idx] > 0)
+                        {
+                            p = m_PenRed;
+                            pdash = m_DashPenRed;
+                        }
+                        else
+                        {
+                            p = m_PenGray;
+                            pdash = m_DashPenGray;
+                        }
+                    }
+                    else
+                    if (VarCB.SelectedIndex == 4)
+                    {
+                        if (m_OverOblL[Idx] >= OVER_OBLL_MIN_HIGH &&
+                            m_OverOblL[Idx] <= OVER_OBLL_MAX_HIGH)
+                        {
+                            p = m_PenGreen;
+                            pdash = m_DashPenGreen;
+                        }
+                        else
+                        if (m_OverOblL[Idx] > 0)
                         {
                             p = m_PenRed;
                             pdash = m_DashPenRed;
@@ -2239,6 +2566,7 @@ namespace AerialPhotoQC
                         b = m_BrushGray;
                 }
                 else
+                if (VarCB.SelectedIndex == 2)
                 {
                     if (m_GSD[Idx] >= m_nGSD_Avg - 2.0 * m_nGSD_Std &&
                         m_GSD[Idx] <= m_nGSD_Avg + 2.0 * m_nGSD_Std)
@@ -2253,6 +2581,46 @@ namespace AerialPhotoQC
                         b = m_BrushBrown;
                     else
                     if (m_GSD[Idx] > 0)
+                        b = m_BrushRed;
+                    else
+                        b = m_BrushGray;
+                }
+                else
+                if (VarCB.SelectedIndex == 3)
+                {
+                    if (m_OverOblF[Idx] >= m_nOverOblF_Avg - 2.0 * m_nOverOblF_Std &&
+                        m_OverOblF[Idx] <= m_nOverOblF_Avg + 2.0 * m_nOverOblF_Std)
+                        b = m_BrushGreen;
+                    else
+                    if (m_OverOblF[Idx] >= m_nOverOblF_Avg - 2.5 * m_nOverOblF_Std &&
+                        m_OverOblF[Idx] <= m_nOverOblF_Avg + 2.5 * m_nOverOblF_Std)
+                        b = m_BrushBlue;
+                    else
+                    if (m_OverOblF[Idx] >= m_nOverOblF_Avg - 3.0 * m_nOverOblF_Std &&
+                        m_OverOblF[Idx] <= m_nOverOblF_Avg + 3.0 * m_nOverOblF_Std)
+                        b = m_BrushBrown;
+                    else
+                    if (m_OverOblF[Idx] > 0)
+                        b = m_BrushRed;
+                    else
+                        b = m_BrushGray;
+                }
+                else
+                if (VarCB.SelectedIndex == 4)
+                {
+                    if (m_OverOblL[Idx] >= m_nOverOblL_Avg - 2.0 * m_nOverOblL_Std &&
+                        m_OverOblL[Idx] <= m_nOverOblL_Avg + 2.0 * m_nOverOblL_Std)
+                        b = m_BrushGreen;
+                    else
+                    if (m_OverOblL[Idx] >= m_nOverOblL_Avg - 2.5 * m_nOverOblL_Std &&
+                        m_OverOblL[Idx] <= m_nOverOblL_Avg + 2.5 * m_nOverOblL_Std)
+                        b = m_BrushBlue;
+                    else
+                    if (m_OverOblL[Idx] >= m_nOverOblL_Avg - 3.0 * m_nOverOblL_Std &&
+                        m_OverOblL[Idx] <= m_nOverOblL_Avg + 3.0 * m_nOverOblL_Std)
+                        b = m_BrushBrown;
+                    else
+                    if (m_OverOblL[Idx] > 0)
                         b = m_BrushRed;
                     else
                         b = m_BrushGray;
@@ -2286,12 +2654,37 @@ namespace AerialPhotoQC
                             b = m_BrushGray;
                     }
                     else
+                    if (VarCB.SelectedIndex == 2)
                     {
                         if (m_GSD[Idx] >= GSD_MIN_LOW &&
                             m_GSD[Idx] <= GSD_MAX_LOW)
                             b = m_BrushGreen;
                         else
                         if (m_GSD[Idx] > 0)
+                            b = m_BrushRed;
+                        else
+                            b = m_BrushGray;
+                    }
+                    else
+                    if (VarCB.SelectedIndex == 3)
+                    {
+                        if (m_OverOblF[Idx] >= OVER_OBLF_MIN_LOW &&
+                            m_OverOblF[Idx] <= OVER_OBLF_MAX_LOW)
+                            b = m_BrushGreen;
+                        else
+                        if (m_OverOblF[Idx] > 0)
+                            b = m_BrushRed;
+                        else
+                            b = m_BrushGray;
+                    }
+                    else
+                    if (VarCB.SelectedIndex == 4)
+                    {
+                        if (m_OverOblL[Idx] >= OVER_OBLL_MIN_LOW &&
+                            m_OverOblL[Idx] <= OVER_OBLL_MAX_LOW)
+                            b = m_BrushGreen;
+                        else
+                        if (m_OverOblL[Idx] > 0)
                             b = m_BrushRed;
                         else
                             b = m_BrushGray;
@@ -2323,12 +2716,37 @@ namespace AerialPhotoQC
                             b = m_BrushGray;
                     }
                     else
+                    if (VarCB.SelectedIndex == 2)
                     {
                         if (m_GSD[Idx] >= GSD_MIN_HIGH &&
                             m_GSD[Idx] <= GSD_MAX_HIGH)
                             b = m_BrushGreen;
                         else
                         if (m_GSD[Idx] > 0)
+                            b = m_BrushRed;
+                        else
+                            b = m_BrushGray;
+                    }
+                    else
+                    if (VarCB.SelectedIndex == 3)
+                    {
+                        if (m_OverOblF[Idx] >= OVER_OBLF_MIN_HIGH &&
+                            m_OverOblF[Idx] <= OVER_OBLF_MAX_HIGH)
+                            b = m_BrushGreen;
+                        else
+                        if (m_OverOblF[Idx] > 0)
+                            b = m_BrushRed;
+                        else
+                            b = m_BrushGray;
+                    }
+                    else
+                    if (VarCB.SelectedIndex == 4)
+                    {
+                        if (m_OverOblL[Idx] >= OVER_OBLL_MIN_HIGH &&
+                            m_OverOblL[Idx] <= OVER_OBLL_MAX_HIGH)
+                            b = m_BrushGreen;
+                        else
+                        if (m_OverOblL[Idx] > 0)
                             b = m_BrushRed;
                         else
                             b = m_BrushGray;
@@ -2352,7 +2770,7 @@ namespace AerialPhotoQC
             double xw, yw;
             int x, y;
             double zc, z1, z2, z3, z4, zavg, height;
-            String val;
+            String val = "";
 
             Count = m_CXs.Count;
             Idx = -1;
@@ -2392,7 +2810,14 @@ namespace AerialPhotoQC
             if (VarCB.SelectedIndex == 1)
                 val = String.Format("{0:0.00}%", m_OverTrs[Idx]);
             else
+            if (VarCB.SelectedIndex == 2)
                 val = String.Format("{0:0.00}cm", m_GSD[Idx]);
+            else
+            if (VarCB.SelectedIndex == 3)
+                val = String.Format("{0:0.00}%", m_OverOblF[Idx]);
+            else
+            if (VarCB.SelectedIndex == 4)
+                val = String.Format("{0:0.00}%", m_OverOblL[Idx]);
 
             InfoSL.Text = String.Format("Z = {0:0.00}, Height = {1:0.00} " +
                                         "(zavg = {2:0.00}, zs = ({3:0.00}, {4:0.00}, {5:0.00}, {6:0.00})) " +

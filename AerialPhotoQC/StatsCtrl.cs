@@ -48,11 +48,35 @@ namespace AerialPhotoQC
         private List<double> m_GSD_HistX;
         private List<double> m_GSD_HistY;
 
+        private double m_nOverOblF_Min;
+        private double m_nOverOblF_Max;
+        private double m_nOverOblF_Avg;
+        private double m_nOverOblF_Med;
+        private double m_nOverOblF_Std;
+        private double m_nOverOblF_Perc20Sigmas;
+        private double m_nOverOblF_Perc25Sigmas;
+        private double m_nOverOblF_Perc30Sigmas;
+        private List<double> m_OverOblF_HistX;
+        private List<double> m_OverOblF_HistY;
+
+        private double m_nOverOblL_Min;
+        private double m_nOverOblL_Max;
+        private double m_nOverOblL_Avg;
+        private double m_nOverOblL_Med;
+        private double m_nOverOblL_Std;
+        private double m_nOverOblL_Perc20Sigmas;
+        private double m_nOverOblL_Perc25Sigmas;
+        private double m_nOverOblL_Perc30Sigmas;
+        private List<double> m_OverOblL_HistX;
+        private List<double> m_OverOblL_HistY;
+
         private bool m_bIsFlight;
+        private bool m_bIsObliqueStats;
 
         private bool m_bStatsExist;
 
         public delegate void OnStatsLoadedHandler(bool IsFlight,
+                                                  bool IsObliqueStats,
 
                                                   String ImgsFile,
                                                   String PolyFile,
@@ -64,7 +88,13 @@ namespace AerialPhotoQC
                                                   double OverTrs_Std,
 
                                                   double GSD_Avg,
-                                                  double GSD_Std);
+                                                  double GSD_Std,
+                                                  
+                                                  double OverOblF_Avg,
+                                                  double OverOblF_Std,
+                                                  
+                                                  double OverOblL_Avg,
+                                                  double OverOblL_Std);
         public OnStatsLoadedHandler OnStatsLoaded;
         public delegate void OnStatsClearedHandler();
         public OnStatsClearedHandler OnStatsCleared;
@@ -80,6 +110,7 @@ namespace AerialPhotoQC
             InitializeComponent();
 
             m_bIsFlight = false;
+            m_bIsObliqueStats = false;
 
             m_bStatsExist = false;
             VarCB.SelectedIndex = 0;
@@ -118,12 +149,19 @@ namespace AerialPhotoQC
             m_GSD_HistX = null;
             m_GSD_HistY = null;
 
+            m_OverOblF_HistX = null;
+            m_OverOblF_HistY = null;
+
+            m_OverOblL_HistX = null;
+            m_OverOblL_HistY = null;
+
             OnStatsLoaded = null;
             OnStatsCleared = null;
         }
 
         /*=== SetStats() ===*/
-        public void SetStats(String ImgsFile,
+        public void SetStats(bool IsObliqueStats,
+                             String ImgsFile,
                              String PolyFile,
                              Stats S)
         {
@@ -183,6 +221,43 @@ namespace AerialPhotoQC
                 m_GSD_HistY.Add(S.m_Stats_GSD_HistY[i]);
             }
 
+            if (IsObliqueStats)
+            {
+                m_nOverOblF_Min = S.m_nStats_OverOblF_Min;
+                m_nOverOblF_Max = S.m_nStats_OverOblF_Max;
+                m_nOverOblF_Avg = S.m_nStats_OverOblF_Avg;
+                m_nOverOblF_Med = S.m_nStats_OverOblF_Med;
+                m_nOverOblF_Std = S.m_nStats_OverOblF_Std;
+                m_nOverOblF_Perc20Sigmas = S.m_nStats_OverOblF_Perc20Sigmas;
+                m_nOverOblF_Perc25Sigmas = S.m_nStats_OverOblF_Perc25Sigmas;
+                m_nOverOblF_Perc30Sigmas = S.m_nStats_OverOblF_Perc30Sigmas;
+                m_OverOblF_HistX = new List<double>();
+                m_OverOblF_HistY = new List<double>();
+                Count = S.m_Stats_OverOblF_HistX.Count;
+                for (i = 0; i < Count; i++)
+                {
+                    m_OverOblF_HistX.Add(S.m_Stats_OverOblF_HistX[i]);
+                    m_OverOblF_HistY.Add(S.m_Stats_OverOblF_HistY[i]);
+                }
+
+                m_nOverOblL_Min = S.m_nStats_OverOblL_Min;
+                m_nOverOblL_Max = S.m_nStats_OverOblL_Max;
+                m_nOverOblL_Avg = S.m_nStats_OverOblL_Avg;
+                m_nOverOblL_Med = S.m_nStats_OverOblL_Med;
+                m_nOverOblL_Std = S.m_nStats_OverOblL_Std;
+                m_nOverOblL_Perc20Sigmas = S.m_nStats_OverOblL_Perc20Sigmas;
+                m_nOverOblL_Perc25Sigmas = S.m_nStats_OverOblL_Perc25Sigmas;
+                m_nOverOblL_Perc30Sigmas = S.m_nStats_OverOblL_Perc30Sigmas;
+                m_OverOblL_HistX = new List<double>();
+                m_OverOblL_HistY = new List<double>();
+                Count = S.m_Stats_OverOblL_HistX.Count;
+                for (i = 0; i < Count; i++)
+                {
+                    m_OverOblL_HistX.Add(S.m_Stats_OverOblL_HistX[i]);
+                    m_OverOblL_HistY.Add(S.m_Stats_OverOblL_HistY[i]);
+                }
+            }
+
             VarL.Enabled = true;
             VarCB.Enabled = true;
             CleanB.Enabled = true;
@@ -190,6 +265,24 @@ namespace AerialPhotoQC
             StatsLV.Enabled = true;
 
             m_bIsFlight = false;
+            m_bIsObliqueStats = IsObliqueStats;
+
+            if (m_bIsObliqueStats)
+            {
+                if (VarCB.Items.Count == 3)
+                {
+                    VarCB.Items.Add("Obl Frontal Overlap, %");
+                    VarCB.Items.Add("Obl Lateral Overlap, %");
+                }
+            }
+            else
+            {
+                if (VarCB.Items.Count == 5)
+                {
+                    VarCB.Items.RemoveAt(4);
+                    VarCB.Items.RemoveAt(3);
+                }
+            }
 
             m_bStatsExist = true;
 
@@ -198,7 +291,8 @@ namespace AerialPhotoQC
         }
 
         /*=== SetStatsF() ===*/
-        public void SetStatsF(String ImgsFile,
+        public void SetStatsF(bool IsObliqueStats,
+                              String ImgsFile,
                               String PolyFile,
                               StatsF S)
         {
@@ -258,6 +352,43 @@ namespace AerialPhotoQC
                 m_GSD_HistY.Add(S.m_Stats_GSD_HistY[i]);
             }
 
+            if (IsObliqueStats)
+            {
+                m_nOverOblF_Min = S.m_nStats_OverOblF_Min;
+                m_nOverOblF_Max = S.m_nStats_OverOblF_Max;
+                m_nOverOblF_Avg = S.m_nStats_OverOblF_Avg;
+                m_nOverOblF_Med = S.m_nStats_OverOblF_Med;
+                m_nOverOblF_Std = S.m_nStats_OverOblF_Std;
+                m_nOverOblF_Perc20Sigmas = S.m_nStats_OverOblF_Perc20Sigmas;
+                m_nOverOblF_Perc25Sigmas = S.m_nStats_OverOblF_Perc25Sigmas;
+                m_nOverOblF_Perc30Sigmas = S.m_nStats_OverOblF_Perc30Sigmas;
+                m_OverOblF_HistX = new List<double>();
+                m_OverOblF_HistY = new List<double>();
+                Count = S.m_Stats_OverOblF_HistX.Count;
+                for (i = 0; i < Count; i++)
+                {
+                    m_OverOblF_HistX.Add(S.m_Stats_OverOblF_HistX[i]);
+                    m_OverOblF_HistY.Add(S.m_Stats_OverOblF_HistY[i]);
+                }
+
+                m_nOverOblL_Min = S.m_nStats_OverOblL_Min;
+                m_nOverOblL_Max = S.m_nStats_OverOblL_Max;
+                m_nOverOblL_Avg = S.m_nStats_OverOblL_Avg;
+                m_nOverOblL_Med = S.m_nStats_OverOblL_Med;
+                m_nOverOblL_Std = S.m_nStats_OverOblL_Std;
+                m_nOverOblL_Perc20Sigmas = S.m_nStats_OverOblL_Perc20Sigmas;
+                m_nOverOblL_Perc25Sigmas = S.m_nStats_OverOblL_Perc25Sigmas;
+                m_nOverOblL_Perc30Sigmas = S.m_nStats_OverOblL_Perc30Sigmas;
+                m_OverOblL_HistX = new List<double>();
+                m_OverOblL_HistY = new List<double>();
+                Count = S.m_Stats_OverOblL_HistX.Count;
+                for (i = 0; i < Count; i++)
+                {
+                    m_OverOblL_HistX.Add(S.m_Stats_OverOblL_HistX[i]);
+                    m_OverOblL_HistY.Add(S.m_Stats_OverOblL_HistY[i]);
+                }
+            }
+
             VarL.Enabled = true;
             VarCB.Enabled = true;
             CleanB.Enabled = true;
@@ -265,6 +396,24 @@ namespace AerialPhotoQC
             StatsLV.Enabled = true;
 
             m_bIsFlight = true;
+            m_bIsObliqueStats = IsObliqueStats;
+
+            if (m_bIsObliqueStats)
+            {
+                if (VarCB.Items.Count == 3)
+                {
+                    VarCB.Items.Add("Obl Frontal Overlap, %");
+                    VarCB.Items.Add("Obl Lateral Overlap, %");
+                }
+            }
+            else
+            {
+                if (VarCB.Items.Count == 5)
+                {
+                    VarCB.Items.RemoveAt(4);
+                    VarCB.Items.RemoveAt(3);
+                }
+            }
 
             m_bStatsExist = true;
 
@@ -337,6 +486,44 @@ namespace AerialPhotoQC
             {
                 m_GSD_HistY.Clear();
                 m_GSD_HistY = null;
+            }
+
+            m_nOverOblF_Min = 0.0;
+            m_nOverOblF_Max = 0.0;
+            m_nOverOblF_Avg = 0.0;
+            m_nOverOblF_Med = 0.0;
+            m_nOverOblF_Std = 0.0;
+            m_nOverOblF_Perc20Sigmas = 0.0;
+            m_nOverOblF_Perc25Sigmas = 0.0;
+            m_nOverOblF_Perc30Sigmas = 0.0;
+            if (m_OverOblF_HistX != null)
+            {
+                m_OverOblF_HistX.Clear();
+                m_OverOblF_HistX = null;
+            }
+            if (m_OverOblF_HistY != null)
+            {
+                m_OverOblF_HistY.Clear();
+                m_OverOblF_HistY = null;
+            }
+
+            m_nOverOblL_Min = 0.0;
+            m_nOverOblL_Max = 0.0;
+            m_nOverOblL_Avg = 0.0;
+            m_nOverOblL_Med = 0.0;
+            m_nOverOblL_Std = 0.0;
+            m_nOverOblL_Perc20Sigmas = 0.0;
+            m_nOverOblL_Perc25Sigmas = 0.0;
+            m_nOverOblL_Perc30Sigmas = 0.0;
+            if (m_OverOblL_HistX != null)
+            {
+                m_OverOblL_HistX.Clear();
+                m_OverOblL_HistX = null;
+            }
+            if (m_OverOblL_HistY != null)
+            {
+                m_OverOblL_HistY.Clear();
+                m_OverOblL_HistY = null;
             }
 
             VarL.Enabled = false;
@@ -462,6 +649,60 @@ namespace AerialPhotoQC
                                    m_GSD_HistY);
             }
 
+            else
+            if (VarCB.SelectedIndex == 3)
+            {
+                StatsLV.Items[0].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblF_Min);
+                StatsLV.Items[1].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblF_Max);
+                StatsLV.Items[2].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblF_Avg);
+                StatsLV.Items[3].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblF_Std);
+                StatsLV.Items[4].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblF_Med);
+                StatsLV.Items[5].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblF_Perc20Sigmas);
+                StatsLV.Items[6].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblF_Perc25Sigmas);
+                StatsLV.Items[7].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblF_Perc30Sigmas);
+
+                Graph_Ctrl.SetInfo(VarCB.Items[VarCB.SelectedIndex].ToString(),
+                                   5,
+
+                                   m_nOverOblF_Min,
+                                   m_nOverOblF_Max,
+                                   m_nOverOblF_Avg,
+                                   m_nOverOblF_Med,
+                                   m_nOverOblF_Std,
+                                   m_nOverOblF_Perc20Sigmas,
+                                   m_nOverOblF_Perc25Sigmas,
+                                   m_nOverOblF_Perc30Sigmas,
+                                   m_OverOblF_HistX,
+                                   m_OverOblF_HistY);
+            }
+
+            else
+            if (VarCB.SelectedIndex == 4)
+            {
+                StatsLV.Items[0].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblL_Min);
+                StatsLV.Items[1].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblL_Max);
+                StatsLV.Items[2].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblL_Avg);
+                StatsLV.Items[3].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblL_Std);
+                StatsLV.Items[4].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblL_Med);
+                StatsLV.Items[5].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblL_Perc20Sigmas);
+                StatsLV.Items[6].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblL_Perc25Sigmas);
+                StatsLV.Items[7].SubItems[1].Text = String.Format("{0:0.00}", m_nOverOblL_Perc30Sigmas);
+
+                Graph_Ctrl.SetInfo(VarCB.Items[VarCB.SelectedIndex].ToString(),
+                                   5,
+
+                                   m_nOverOblL_Min,
+                                   m_nOverOblL_Max,
+                                   m_nOverOblL_Avg,
+                                   m_nOverOblL_Med,
+                                   m_nOverOblL_Std,
+                                   m_nOverOblL_Perc20Sigmas,
+                                   m_nOverOblL_Perc25Sigmas,
+                                   m_nOverOblL_Perc30Sigmas,
+                                   m_OverOblL_HistX,
+                                   m_OverOblL_HistY);
+            }
+
             StatsLV.Columns[0].Width = -2;
             StatsLV.Columns[1].Width = -2;
             for (i = 0; i < 8; i++)
@@ -506,6 +747,7 @@ namespace AerialPhotoQC
 
                     SW.WriteLine("");
                     SW.WriteLine("IsFlight\t" + m_bIsFlight.ToString());
+                    SW.WriteLine("IsObliqueStats\t" + m_bIsObliqueStats.ToString());
                     SW.WriteLine("Footprints\t" + m_sImgsFile);
                     SW.WriteLine("Polygon\t" + m_sPolyFile);
                     SW.WriteLine("");
@@ -564,6 +806,47 @@ namespace AerialPhotoQC
                     SW.WriteLine("HistX\tHistY");
                     for (i = 0; i < Count; i++)
                         SW.WriteLine(String.Format("{0:0.000}\t{1:0.000000}", m_GSD_HistX[i], m_GSD_HistY[i]));
+
+                    if (m_bIsObliqueStats)
+                    {
+                        SW.WriteLine("");
+                        SW.WriteLine("Obl Frontal Overlap, %");
+                        SW.WriteLine("");
+                        SW.WriteLine(String.Format("Min\t{0:0.00}", m_nOverOblF_Min));
+                        SW.WriteLine(String.Format("Max\t{0:0.00}", m_nOverOblF_Max));
+                        SW.WriteLine(String.Format("Avg\t{0:0.00}", m_nOverOblF_Avg));
+                        SW.WriteLine(String.Format("Std\t{0:0.00}", m_nOverOblF_Std));
+                        SW.WriteLine(String.Format("Med\t{0:0.00}", m_nOverOblF_Med));
+                        SW.WriteLine(String.Format("20S\t{0:0.00}", m_nOverOblF_Perc20Sigmas));
+                        SW.WriteLine(String.Format("25S\t{0:0.00}", m_nOverOblF_Perc25Sigmas));
+                        SW.WriteLine(String.Format("30S\t{0:0.00}", m_nOverOblF_Perc30Sigmas));
+                        SW.WriteLine("");
+                        SW.WriteLine("Histogram");
+                        Count = m_OverOblF_HistX.Count;
+                        SW.WriteLine("Count\t" + Count.ToString());
+                        SW.WriteLine("HistX\tHistY");
+                        for (i = 0; i < Count; i++)
+                            SW.WriteLine(String.Format("{0:0.000}\t{1:0.000000}", m_OverOblF_HistX[i], m_OverOblF_HistY[i]));
+
+                        SW.WriteLine("");
+                        SW.WriteLine("Obl Lateral Overlap, %");
+                        SW.WriteLine("");
+                        SW.WriteLine(String.Format("Min\t{0:0.00}", m_nOverOblL_Min));
+                        SW.WriteLine(String.Format("Max\t{0:0.00}", m_nOverOblL_Max));
+                        SW.WriteLine(String.Format("Avg\t{0:0.00}", m_nOverOblL_Avg));
+                        SW.WriteLine(String.Format("Std\t{0:0.00}", m_nOverOblL_Std));
+                        SW.WriteLine(String.Format("Med\t{0:0.00}", m_nOverOblL_Med));
+                        SW.WriteLine(String.Format("20S\t{0:0.00}", m_nOverOblL_Perc20Sigmas));
+                        SW.WriteLine(String.Format("25S\t{0:0.00}", m_nOverOblL_Perc25Sigmas));
+                        SW.WriteLine(String.Format("30S\t{0:0.00}", m_nOverOblL_Perc30Sigmas));
+                        SW.WriteLine("");
+                        SW.WriteLine("Histogram");
+                        Count = m_OverOblL_HistX.Count;
+                        SW.WriteLine("Count\t" + Count.ToString());
+                        SW.WriteLine("HistX\tHistY");
+                        for (i = 0; i < Count; i++)
+                            SW.WriteLine(String.Format("{0:0.000}\t{1:0.000000}", m_OverOblL_HistX[i], m_OverOblL_HistY[i]));
+                    }
 
                     SW.Close();
                     SW.Dispose();
@@ -634,6 +917,28 @@ namespace AerialPhotoQC
             List<double> GSD_HistX = null;
             List<double> GSD_HistY = null;
 
+            double OverOblF_Min = 0.0;
+            double OverOblF_Max = 0.0;
+            double OverOblF_Avg = 0.0;
+            double OverOblF_Med = 0.0;
+            double OverOblF_Std = 0.0;
+            double OverOblF_Perc20Sigmas = 0.0;
+            double OverOblF_Perc25Sigmas = 0.0;
+            double OverOblF_Perc30Sigmas = 0.0;
+            List<double> OverOblF_HistX = null;
+            List<double> OverOblF_HistY = null;
+
+            double OverOblL_Min = 0.0;
+            double OverOblL_Max = 0.0;
+            double OverOblL_Avg = 0.0;
+            double OverOblL_Med = 0.0;
+            double OverOblL_Std = 0.0;
+            double OverOblL_Perc20Sigmas = 0.0;
+            double OverOblL_Perc25Sigmas = 0.0;
+            double OverOblL_Perc30Sigmas = 0.0;
+            List<double> OverOblL_HistX = null;
+            List<double> OverOblL_HistY = null;
+
             Stats St = null;
             StatsF StF = null;
             double x, y;
@@ -665,7 +970,7 @@ namespace AerialPhotoQC
                         return;
                     }
 
-                    // IsFlight, Footprints & DTM
+                    // IsFlight, IsObliqueStats, Footprints and DTM
                     /////////////////////////////////////////////////////////////////////
                     S = SR.ReadLine();
                     if (S != "")
@@ -710,6 +1015,47 @@ namespace AerialPhotoQC
                         return;
                     }
                     if (!bool.TryParse(s[1], out m_bIsFlight))
+                    {
+                        this.Enabled = true;
+                        this.Cursor = Cursors.Default;
+                        SR.Close();
+                        SR.Dispose();
+                        SR = null;
+                        MessageBox.Show("Invalid Statistics File.",
+                                        "ERROR",
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Error);
+                        return;
+                    }
+                    S = SR.ReadLine();
+                    s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                    if (s.Length != 2)
+                    {
+                        this.Enabled = true;
+                        this.Cursor = Cursors.Default;
+                        SR.Close();
+                        SR.Dispose();
+                        SR = null;
+                        MessageBox.Show("Invalid Statistics File.",
+                                        "ERROR",
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Error);
+                        return;
+                    }
+                    if (s[0] != "IsObliqueStats")
+                    {
+                        this.Enabled = true;
+                        this.Cursor = Cursors.Default;
+                        SR.Close();
+                        SR.Dispose();
+                        SR = null;
+                        MessageBox.Show("Invalid Statistics File.",
+                                        "ERROR",
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Error);
+                        return;
+                    }
+                    if (!bool.TryParse(s[1], out m_bIsObliqueStats))
                     {
                         this.Enabled = true;
                         this.Cursor = Cursors.Default;
@@ -2283,6 +2629,1017 @@ namespace AerialPhotoQC
                         GSD_HistY.Add(y);
                     }
 
+                    if (m_bIsObliqueStats)
+                    {
+                        // OverOblF
+                        /////////////////////////////////////////////////////////////////////
+                        S = SR.ReadLine();
+                        if (S != "")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        if (S != "Obl Frontal Overlap, %")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        if (S != "")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "Min")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblF_Min))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "Max")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblF_Max))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "Avg")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblF_Avg))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "Std")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblF_Std))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "Med")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblF_Med))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "20S")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblF_Perc20Sigmas))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "25S")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblF_Perc25Sigmas))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "30S")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblF_Perc30Sigmas))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        if (S != "")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        if (S != "Histogram")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "Count")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!int.TryParse(s[1], out Count))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        if (S != "HistX	HistY")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        OverOblF_HistX = new List<double>();
+                        OverOblF_HistY = new List<double>();
+                        for (i = 0; i < Count; i++)
+                        {
+                            S = SR.ReadLine();
+                            s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                            if (s.Length != 2)
+                            {
+                                this.Enabled = true;
+                                this.Cursor = Cursors.Default;
+                                SR.Close();
+                                SR.Dispose();
+                                SR = null;
+                                MessageBox.Show("Invalid Statistics File.",
+                                                "ERROR",
+                                                MessageBoxButtons.OK,
+                                                MessageBoxIcon.Error);
+                                return;
+                            }
+                            if (!double.TryParse(s[0], out x))
+                            {
+                                this.Enabled = true;
+                                this.Cursor = Cursors.Default;
+                                SR.Close();
+                                SR.Dispose();
+                                SR = null;
+                                MessageBox.Show("Invalid Statistics File.",
+                                                "ERROR",
+                                                MessageBoxButtons.OK,
+                                                MessageBoxIcon.Error);
+                                return;
+                            }
+                            if (!double.TryParse(s[1], out y))
+                            {
+                                this.Enabled = true;
+                                this.Cursor = Cursors.Default;
+                                SR.Close();
+                                SR.Dispose();
+                                SR = null;
+                                MessageBox.Show("Invalid Statistics File.",
+                                                "ERROR",
+                                                MessageBoxButtons.OK,
+                                                MessageBoxIcon.Error);
+                                return;
+                            }
+                            OverOblF_HistX.Add(x);
+                            OverOblF_HistY.Add(y);
+                        }
+
+                        // OverOblL
+                        /////////////////////////////////////////////////////////////////////
+                        S = SR.ReadLine();
+                        if (S != "")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        if (S != "Obl Lateral Overlap, %")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        if (S != "")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "Min")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblL_Min))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "Max")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblL_Max))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "Avg")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblL_Avg))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "Std")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblL_Std))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "Med")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblL_Med))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "20S")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblL_Perc20Sigmas))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "25S")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblL_Perc25Sigmas))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "30S")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!double.TryParse(s[1], out OverOblL_Perc30Sigmas))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        if (S != "")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        if (S != "Histogram")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length != 2)
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (s[0] != "Count")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!int.TryParse(s[1], out Count))
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        S = SR.ReadLine();
+                        if (S != "HistX	HistY")
+                        {
+                            this.Enabled = true;
+                            this.Cursor = Cursors.Default;
+                            SR.Close();
+                            SR.Dispose();
+                            SR = null;
+                            MessageBox.Show("Invalid Statistics File.",
+                                            "ERROR",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                            return;
+                        }
+                        OverOblL_HistX = new List<double>();
+                        OverOblL_HistY = new List<double>();
+                        for (i = 0; i < Count; i++)
+                        {
+                            S = SR.ReadLine();
+                            s = S.Split(Sep, StringSplitOptions.RemoveEmptyEntries);
+                            if (s.Length != 2)
+                            {
+                                this.Enabled = true;
+                                this.Cursor = Cursors.Default;
+                                SR.Close();
+                                SR.Dispose();
+                                SR = null;
+                                MessageBox.Show("Invalid Statistics File.",
+                                                "ERROR",
+                                                MessageBoxButtons.OK,
+                                                MessageBoxIcon.Error);
+                                return;
+                            }
+                            if (!double.TryParse(s[0], out x))
+                            {
+                                this.Enabled = true;
+                                this.Cursor = Cursors.Default;
+                                SR.Close();
+                                SR.Dispose();
+                                SR = null;
+                                MessageBox.Show("Invalid Statistics File.",
+                                                "ERROR",
+                                                MessageBoxButtons.OK,
+                                                MessageBoxIcon.Error);
+                                return;
+                            }
+                            if (!double.TryParse(s[1], out y))
+                            {
+                                this.Enabled = true;
+                                this.Cursor = Cursors.Default;
+                                SR.Close();
+                                SR.Dispose();
+                                SR = null;
+                                MessageBox.Show("Invalid Statistics File.",
+                                                "ERROR",
+                                                MessageBoxButtons.OK,
+                                                MessageBoxIcon.Error);
+                                return;
+                            }
+                            OverOblL_HistX.Add(x);
+                            OverOblL_HistY.Add(y);
+                        }
+                    }
+
                     SR.Close();
                     SR.Dispose();
                     SR = null;
@@ -2324,7 +3681,33 @@ namespace AerialPhotoQC
                         St.m_Stats_GSD_HistX = GSD_HistX;
                         St.m_Stats_GSD_HistY = GSD_HistY;
 
-                        SetStats(m_sImgsFile,
+                        if (m_bIsObliqueStats)
+                        {
+                            St.m_nStats_OverOblF_Min = OverOblF_Min;
+                            St.m_nStats_OverOblF_Max = OverOblF_Max;
+                            St.m_nStats_OverOblF_Avg = OverOblF_Avg;
+                            St.m_nStats_OverOblF_Std = OverOblF_Std;
+                            St.m_nStats_OverOblF_Med = OverOblF_Med;
+                            St.m_nStats_OverOblF_Perc20Sigmas = OverOblF_Perc20Sigmas;
+                            St.m_nStats_OverOblF_Perc25Sigmas = OverOblF_Perc25Sigmas;
+                            St.m_nStats_OverOblF_Perc30Sigmas = OverOblF_Perc30Sigmas;
+                            St.m_Stats_OverOblF_HistX = OverOblF_HistX;
+                            St.m_Stats_OverOblF_HistY = OverOblF_HistY;
+
+                            St.m_nStats_OverOblL_Min = OverOblL_Min;
+                            St.m_nStats_OverOblL_Max = OverOblL_Max;
+                            St.m_nStats_OverOblL_Avg = OverOblL_Avg;
+                            St.m_nStats_OverOblL_Std = OverOblL_Std;
+                            St.m_nStats_OverOblL_Med = OverOblL_Med;
+                            St.m_nStats_OverOblL_Perc20Sigmas = OverOblL_Perc20Sigmas;
+                            St.m_nStats_OverOblL_Perc25Sigmas = OverOblL_Perc25Sigmas;
+                            St.m_nStats_OverOblL_Perc30Sigmas = OverOblL_Perc30Sigmas;
+                            St.m_Stats_OverOblL_HistX = OverOblL_HistX;
+                            St.m_Stats_OverOblL_HistY = OverOblL_HistY;
+                        }
+
+                        SetStats(m_bIsObliqueStats,
+                                 m_sImgsFile,
                                  m_sPolyFile,
                                  St);
                         Application.DoEvents();
@@ -2368,7 +3751,33 @@ namespace AerialPhotoQC
                         StF.m_Stats_GSD_HistX = GSD_HistX;
                         StF.m_Stats_GSD_HistY = GSD_HistY;
 
-                        SetStatsF(m_sImgsFile,
+                        if (m_bIsObliqueStats)
+                        {
+                            StF.m_nStats_OverOblF_Min = OverOblF_Min;
+                            StF.m_nStats_OverOblF_Max = OverOblF_Max;
+                            StF.m_nStats_OverOblF_Avg = OverOblF_Avg;
+                            StF.m_nStats_OverOblF_Std = OverOblF_Std;
+                            StF.m_nStats_OverOblF_Med = OverOblF_Med;
+                            StF.m_nStats_OverOblF_Perc20Sigmas = OverOblF_Perc20Sigmas;
+                            StF.m_nStats_OverOblF_Perc25Sigmas = OverOblF_Perc25Sigmas;
+                            StF.m_nStats_OverOblF_Perc30Sigmas = OverOblF_Perc30Sigmas;
+                            StF.m_Stats_OverOblF_HistX = OverOblF_HistX;
+                            StF.m_Stats_OverOblF_HistY = OverOblF_HistY;
+
+                            StF.m_nStats_OverOblL_Min = OverOblL_Min;
+                            StF.m_nStats_OverOblL_Max = OverOblL_Max;
+                            StF.m_nStats_OverOblL_Avg = OverOblL_Avg;
+                            StF.m_nStats_OverOblL_Std = OverOblL_Std;
+                            StF.m_nStats_OverOblL_Med = OverOblL_Med;
+                            StF.m_nStats_OverOblL_Perc20Sigmas = OverOblL_Perc20Sigmas;
+                            StF.m_nStats_OverOblL_Perc25Sigmas = OverOblL_Perc25Sigmas;
+                            StF.m_nStats_OverOblL_Perc30Sigmas = OverOblL_Perc30Sigmas;
+                            StF.m_Stats_OverOblL_HistX = OverOblL_HistX;
+                            StF.m_Stats_OverOblL_HistY = OverOblL_HistY;
+                        }
+
+                        SetStatsF(m_bIsObliqueStats,
+                                  m_sImgsFile,
                                   m_sPolyFile,
                                   StF);
                         Application.DoEvents();
@@ -2411,7 +3820,30 @@ namespace AerialPhotoQC
                         GSD_HistY = null;
                     }
 
+                    if (OverOblF_HistX != null)
+                    {
+                        OverOblF_HistX.Clear();
+                        OverOblF_HistX = null;
+                    }
+                    if (OverOblF_HistY != null)
+                    {
+                        OverOblF_HistY.Clear();
+                        OverOblF_HistY = null;
+                    }
+
+                    if (OverOblL_HistX != null)
+                    {
+                        OverOblL_HistX.Clear();
+                        OverOblL_HistX = null;
+                    }
+                    if (OverOblL_HistY != null)
+                    {
+                        OverOblL_HistY.Clear();
+                        OverOblL_HistY = null;
+                    }
+
                     St = null;
+                    StF = null;
 
                     ClearStats();
                     Application.DoEvents();
@@ -2428,8 +3860,67 @@ namespace AerialPhotoQC
                 this.Enabled = true;
                 this.Cursor = Cursors.Default;
 
+                if (OverLon_HistX != null)
+                {
+                    OverLon_HistX.Clear();
+                    OverLon_HistX = null;
+                }
+                if (OverLon_HistY != null)
+                {
+                    OverLon_HistY.Clear();
+                    OverLon_HistY = null;
+                }
+
+                if (OverTrs_HistX != null)
+                {
+                    OverTrs_HistX.Clear();
+                    OverTrs_HistX = null;
+                }
+                if (OverTrs_HistY != null)
+                {
+                    OverTrs_HistY.Clear();
+                    OverTrs_HistY = null;
+                }
+
+                if (GSD_HistX != null)
+                {
+                    GSD_HistX.Clear();
+                    GSD_HistX = null;
+                }
+                if (GSD_HistY != null)
+                {
+                    GSD_HistY.Clear();
+                    GSD_HistY = null;
+                }
+
+                if (OverOblF_HistX != null)
+                {
+                    OverOblF_HistX.Clear();
+                    OverOblF_HistX = null;
+                }
+                if (OverOblF_HistY != null)
+                {
+                    OverOblF_HistY.Clear();
+                    OverOblF_HistY = null;
+                }
+
+                if (OverOblL_HistX != null)
+                {
+                    OverOblL_HistX.Clear();
+                    OverOblL_HistX = null;
+                }
+                if (OverOblL_HistY != null)
+                {
+                    OverOblL_HistY.Clear();
+                    OverOblL_HistY = null;
+                }
+
+                St = null;
+                StF = null;
+
                 if (OnStatsLoaded != null)
                     OnStatsLoaded(m_bIsFlight,
+                                  m_bIsObliqueStats,
 
                                   m_sImgsFile,
                                   m_sPolyFile,
@@ -2441,7 +3932,13 @@ namespace AerialPhotoQC
                                   m_nOverTrs_Std,
 
                                   m_nGSD_Avg,
-                                  m_nGSD_Std);
+                                  m_nGSD_Std,
+                                  
+                                  m_nOverOblF_Avg,
+                                  m_nOverOblF_Std,
+
+                                  m_nOverOblL_Avg,
+                                  m_nOverOblL_Std);
             }
         }
 

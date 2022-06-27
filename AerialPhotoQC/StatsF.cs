@@ -13,6 +13,7 @@ namespace AerialPhotoQC
         private const double Z_COMPARE_DELTA = 1.0;
         private const int MAX_ITER = 5;
 
+        private Cfg m_Cfg;
         private ShpInfoF m_ShpInfo;
         private DTMInfoF m_DTMInfo;
         private MonoModel m_MonoModel;
@@ -56,6 +57,28 @@ namespace AerialPhotoQC
         public List<double> m_Stats_GSD_HistX;
         public List<double> m_Stats_GSD_HistY;
 
+        public double m_nStats_OverOblF_Min;
+        public double m_nStats_OverOblF_Max;
+        public double m_nStats_OverOblF_Avg;
+        public double m_nStats_OverOblF_Med;
+        public double m_nStats_OverOblF_Std;
+        public double m_nStats_OverOblF_Perc20Sigmas;
+        public double m_nStats_OverOblF_Perc25Sigmas;
+        public double m_nStats_OverOblF_Perc30Sigmas;
+        public List<double> m_Stats_OverOblF_HistX;
+        public List<double> m_Stats_OverOblF_HistY;
+
+        public double m_nStats_OverOblL_Min;
+        public double m_nStats_OverOblL_Max;
+        public double m_nStats_OverOblL_Avg;
+        public double m_nStats_OverOblL_Med;
+        public double m_nStats_OverOblL_Std;
+        public double m_nStats_OverOblL_Perc20Sigmas;
+        public double m_nStats_OverOblL_Perc25Sigmas;
+        public double m_nStats_OverOblL_Perc30Sigmas;
+        public List<double> m_Stats_OverOblL_HistX;
+        public List<double> m_Stats_OverOblL_HistY;
+
         /*-----------------------------------------------------------------------------*/
         /*--------------------------------- Public ------------------------------------*/
         /*-----------------------------------------------------------------------------*/
@@ -64,11 +87,27 @@ namespace AerialPhotoQC
         /*=== StatsF() ===*/
         public StatsF()
         {
+            m_Stats_OverLon_HistX = null;
+            m_Stats_OverLon_HistY = null;
+
+            m_Stats_OverTrs_HistX = null;
+            m_Stats_OverTrs_HistY = null;
+
+            m_Stats_GSD_HistX = null;
+            m_Stats_GSD_HistY = null;
+
+            m_Stats_OverOblF_HistX = null;
+            m_Stats_OverOblF_HistY = null;
+
+            m_Stats_OverOblL_HistX = null;
+            m_Stats_OverOblL_HistY = null;
+
             DoClose();
         }
 
         /*=== Open() ===*/
-        public String Open(ShpInfoF Shp_Info,
+        public String Open(Cfg cfg,
+                           ShpInfoF Shp_Info,
                            DTMInfoF DTM_Info,
                            MonoModel Mono_Model,
                            int GSDGridSize,
@@ -76,6 +115,7 @@ namespace AerialPhotoQC
                            InputFCtrl Ctrl_,
                            System.Windows.Forms.Label Lbl_)
         {
+            m_Cfg = cfg;
             m_ShpInfo = Shp_Info;
             m_DTMInfo = DTM_Info;
             m_MonoModel = Mono_Model;
@@ -116,6 +156,7 @@ namespace AerialPhotoQC
         /*=== DoClose() ===*/
         private void DoClose()
         {
+            m_Cfg = null;
             m_ShpInfo = null;
             m_DTMInfo = null;
             m_MonoModel = null;
@@ -181,6 +222,44 @@ namespace AerialPhotoQC
             {
                 m_Stats_GSD_HistY.Clear();
                 m_Stats_GSD_HistY = null;
+            }
+
+            m_nStats_OverOblF_Min = 0.0;
+            m_nStats_OverOblF_Max = 0.0;
+            m_nStats_OverOblF_Avg = 0.0;
+            m_nStats_OverOblF_Med = 0.0;
+            m_nStats_OverOblF_Std = 0.0;
+            m_nStats_OverOblF_Perc20Sigmas = 0.0;
+            m_nStats_OverOblF_Perc25Sigmas = 0.0;
+            m_nStats_OverOblF_Perc30Sigmas = 0.0;
+            if (m_Stats_OverOblF_HistX != null)
+            {
+                m_Stats_OverOblF_HistX.Clear();
+                m_Stats_OverOblF_HistX = null;
+            }
+            if (m_Stats_OverOblF_HistY != null)
+            {
+                m_Stats_OverOblF_HistY.Clear();
+                m_Stats_OverOblF_HistY = null;
+            }
+
+            m_nStats_OverOblL_Min = 0.0;
+            m_nStats_OverOblL_Max = 0.0;
+            m_nStats_OverOblL_Avg = 0.0;
+            m_nStats_OverOblL_Med = 0.0;
+            m_nStats_OverOblL_Std = 0.0;
+            m_nStats_OverOblL_Perc20Sigmas = 0.0;
+            m_nStats_OverOblL_Perc25Sigmas = 0.0;
+            m_nStats_OverOblL_Perc30Sigmas = 0.0;
+            if (m_Stats_OverOblL_HistX != null)
+            {
+                m_Stats_OverOblL_HistX.Clear();
+                m_Stats_OverOblL_HistX = null;
+            }
+            if (m_Stats_OverOblL_HistY != null)
+            {
+                m_Stats_OverOblL_HistY.Clear();
+                m_Stats_OverOblL_HistY = null;
             }
         }
 
@@ -360,6 +439,8 @@ namespace AerialPhotoQC
             double OverLon_Min, OverLon_Max, OverLon_Avg, OverLon_Avg2, OverLon_Std;
             double OverTrs_Min, OverTrs_Max, OverTrs_Avg, OverTrs_Avg2, OverTrs_Std;
             double GSDA_Min, GSDA_Max, GSDA_Avg, GSDA_Avg2, GSDA_Std;
+            double Over_OblF_Min, Over_OblF_Max, Over_OblF_Avg, Over_OblF_Avg2, Over_OblF_Std;
+            double Over_OblL_Min, Over_OblL_Max, Over_OblL_Avg, Over_OblL_Avg2, Over_OblL_Std;
             double Over, GSDA;
 
             PntCount = m_ShpInfo.m_PntXs[LinIdx].Count;
@@ -387,6 +468,16 @@ namespace AerialPhotoQC
             GSDA_Avg = 0.0;
             GSDA_Avg2 = 0.0;
             GSDA_Std = 0.0;
+            Over_OblF_Min = double.MaxValue;
+            Over_OblF_Max = double.MinValue;
+            Over_OblF_Avg = 0.0;
+            Over_OblF_Avg2 = 0.0;
+            Over_OblF_Std = 0.0;
+            Over_OblL_Min = double.MaxValue;
+            Over_OblL_Max = double.MinValue;
+            Over_OblL_Avg = 0.0;
+            Over_OblL_Avg2 = 0.0;
+            Over_OblL_Std = 0.0;
             TrsCount = 0;
             for (PntIdx = 0; PntIdx < PntCount; PntIdx++)
             {
@@ -417,6 +508,25 @@ namespace AerialPhotoQC
                     GSDA_Max = GSDA;
                 GSDA_Avg += GSDA;
                 GSDA_Avg2 += GSDA * GSDA;
+
+                if (m_Cfg.m_Data.ObliqueStats)
+                {
+                    Over = m_ShpInfo.m_PntOverOblF[LinIdx][PntIdx];
+                    if (Over < Over_OblF_Min)
+                        Over_OblF_Min = Over;
+                    if (Over > Over_OblF_Max)
+                        Over_OblF_Max = Over;
+                    Over_OblF_Avg += Over;
+                    Over_OblF_Avg2 += Over * Over;
+
+                    Over = m_ShpInfo.m_PntOverOblL[LinIdx][PntIdx];
+                    if (Over < Over_OblL_Min)
+                        Over_OblL_Min = Over;
+                    if (Over > Over_OblL_Max)
+                        Over_OblL_Max = Over;
+                    Over_OblL_Avg += Over;
+                    Over_OblL_Avg2 += Over * Over;
+                }
             }
             OverLon_Avg /= (double)PntCount;
             OverLon_Avg2 /= (double)PntCount;
@@ -424,10 +534,22 @@ namespace AerialPhotoQC
             OverTrs_Avg2 /= (double)TrsCount;
             GSDA_Avg /= (double)PntCount;
             GSDA_Avg2 /= (double)PntCount;
+            if (m_Cfg.m_Data.ObliqueStats)
+            {
+                Over_OblF_Avg /= (double)PntCount;
+                Over_OblF_Avg2 /= (double)PntCount;
+                Over_OblL_Avg /= (double)PntCount;
+                Over_OblL_Avg2 /= (double)PntCount;
+            }
 
             OverLon_Std = Math.Sqrt(OverLon_Avg2 - OverLon_Avg * OverLon_Avg);
             OverTrs_Std = Math.Sqrt(OverTrs_Avg2 - OverTrs_Avg * OverTrs_Avg);
             GSDA_Std = Math.Sqrt(GSDA_Avg2 - GSDA_Avg * GSDA_Avg);
+            if (m_Cfg.m_Data.ObliqueStats)
+            {
+                Over_OblF_Std = Math.Sqrt(Over_OblF_Avg2 - Over_OblF_Avg * Over_OblF_Avg);
+                Over_OblL_Std = Math.Sqrt(Over_OblL_Avg2 - Over_OblL_Avg * Over_OblL_Avg);
+            }
 
             m_ShpInfo.m_LinOverLon_Min[LinIdx] = OverLon_Min;
             m_ShpInfo.m_LinOverLon_Max[LinIdx] = OverLon_Max;
@@ -443,6 +565,19 @@ namespace AerialPhotoQC
             m_ShpInfo.m_LinGSDA_Max[LinIdx] = GSDA_Max;
             m_ShpInfo.m_LinGSDA_Avg[LinIdx] = GSDA_Avg;
             m_ShpInfo.m_LinGSDA_Std[LinIdx] = GSDA_Std;
+
+            if (m_Cfg.m_Data.ObliqueStats)
+            {
+                m_ShpInfo.m_LinOverOblF_Min[LinIdx] = Over_OblF_Min;
+                m_ShpInfo.m_LinOverOblF_Max[LinIdx] = Over_OblF_Max;
+                m_ShpInfo.m_LinOverOblF_Avg[LinIdx] = Over_OblF_Avg;
+                m_ShpInfo.m_LinOverOblF_Std[LinIdx] = Over_OblF_Std;
+
+                m_ShpInfo.m_LinOverOblL_Min[LinIdx] = Over_OblL_Min;
+                m_ShpInfo.m_LinOverOblL_Max[LinIdx] = Over_OblL_Max;
+                m_ShpInfo.m_LinOverOblL_Avg[LinIdx] = Over_OblL_Avg;
+                m_ShpInfo.m_LinOverOblL_Std[LinIdx] = Over_OblL_Std;
+            }
 
             return "OK";
         }
@@ -534,6 +669,14 @@ namespace AerialPhotoQC
             {
                 OverLon /= CountLon;
                 m_ShpInfo.m_PntOverLon[LinIdx][PntIdx] = OverLon;
+                if (m_Cfg.m_Data.ObliqueStats)
+                {
+                    m_ShpInfo.m_PntOverOblF[LinIdx][PntIdx] = m_Cfg.m_Data.OF_A * OverLon * OverLon +
+                                                              m_Cfg.m_Data.OF_B * OverLon +
+                                                              m_Cfg.m_Data.OF_C;
+                    m_ShpInfo.m_PntOverOblL[LinIdx][PntIdx] = m_Cfg.m_Data.OL_B * OverLon +
+                                                              m_Cfg.m_Data.OL_C;
+                }
             }
 
             if (CountTrs > 0)
@@ -896,6 +1039,11 @@ namespace AerialPhotoQC
             GetFinalStats_OverLon();
             GetFinalStats_OverTrs();
             GetFinalStats_GSD();
+            if (m_Cfg.m_Data.ObliqueStats)
+            {
+                GetFinalStats_OverOblF();
+                GetFinalStats_OverOblL();
+            }
 
             return "OK";
         }
@@ -1302,6 +1450,240 @@ namespace AerialPhotoQC
                                                  "m_nStats_GSD_Perc25Sigmas = " + m_nStats_GSD_Perc25Sigmas.ToString() + "\n" +
                                                  "m_nStats_GSD_Perc30Sigmas = " + m_nStats_GSD_Perc30Sigmas.ToString() + "\n");
             */
+        }
+
+        /*=== GetFinalStats_OverOblF() ===*/
+        private void GetFinalStats_OverOblF()
+        {
+            int LinCount, LinIdx, PntCount, PntIdx, TotalCount;
+            double OverOblFAvg, Stats_OverOblF_Avg2;
+
+            m_nStats_OverOblF_Min = double.MaxValue;
+            m_nStats_OverOblF_Max = double.MinValue;
+            m_nStats_OverOblF_Avg = 0.0;
+            Stats_OverOblF_Avg2 = 0.0;
+            m_nStats_OverOblF_Med = 0.0;
+            m_nStats_OverOblF_Std = 0.0;
+            m_nStats_OverOblF_Perc20Sigmas = 0.0;
+            m_nStats_OverOblF_Perc25Sigmas = 0.0;
+            m_nStats_OverOblF_Perc30Sigmas = 0.0;
+            m_Stats_OverOblF_HistX = new List<double>();
+            m_Stats_OverOblF_HistY = new List<double>();
+
+            LinCount = m_ShpInfo.m_PntOverOblF.Count;
+            TotalCount = 0;
+            for (LinIdx = 0; LinIdx < LinCount; LinIdx++)
+            {
+                PntCount = m_ShpInfo.m_PntOverOblF[LinIdx].Count;
+                for (PntIdx = 0; PntIdx < PntCount; PntIdx++)
+                {
+                    OverOblFAvg = m_ShpInfo.m_PntOverOblF[LinIdx][PntIdx];
+                    if (OverOblFAvg == 0)
+                        continue;
+
+                    if (OverOblFAvg < m_nStats_OverOblF_Min)
+                        m_nStats_OverOblF_Min = OverOblFAvg;
+                    if (OverOblFAvg > m_nStats_OverOblF_Max)
+                        m_nStats_OverOblF_Max = OverOblFAvg;
+                    m_nStats_OverOblF_Avg += OverOblFAvg;
+                    Stats_OverOblF_Avg2 += OverOblFAvg * OverOblFAvg;
+
+                    ++TotalCount;
+                }
+            }
+            m_nStats_OverOblF_Avg /= (double)TotalCount;
+            Stats_OverOblF_Avg2 /= (double)TotalCount;
+            m_nStats_OverOblF_Std = Math.Sqrt(Stats_OverOblF_Avg2 - m_nStats_OverOblF_Avg * m_nStats_OverOblF_Avg);
+
+            GetFinalStats_OverOblF_Hist(TotalCount);
+        }
+
+        /*=== GetFinalStats_OverOblF_Hist() ===*/
+        private void GetFinalStats_OverOblF_Hist(int TotalCount)
+        {
+            int BeansCount, BeanIdx;
+            double Step;
+            int LinCount, LinIdx, PntCount, PntIdx;
+            double OverOblFAvg, Delta;
+            double MaxVal;
+            double Over20SigmaLeft, Over20SigmaRight;
+            double Over25SigmaLeft, Over25SigmaRight;
+            double Over30SigmaLeft, Over30SigmaRight;
+
+            Over20SigmaLeft = m_nStats_OverOblF_Avg - 2.0 * m_nStats_OverOblF_Std;
+            Over20SigmaRight = m_nStats_OverOblF_Avg + 2.0 * m_nStats_OverOblF_Std;
+            Over25SigmaLeft = m_nStats_OverOblF_Avg - 2.5 * m_nStats_OverOblF_Std;
+            Over25SigmaRight = m_nStats_OverOblF_Avg + 2.5 * m_nStats_OverOblF_Std;
+            Over30SigmaLeft = m_nStats_OverOblF_Avg - 3.0 * m_nStats_OverOblF_Std;
+            Over30SigmaRight = m_nStats_OverOblF_Avg + 3.0 * m_nStats_OverOblF_Std;
+
+            Delta = 1.0 / (double)TotalCount;
+
+            BeansCount = (int)Math.Sqrt((double)TotalCount);
+            Step = (m_nStats_OverOblF_Max - m_nStats_OverOblF_Min) / (double)BeansCount;
+            for (BeanIdx = 0; BeanIdx < BeansCount; BeanIdx++)
+            {
+                m_Stats_OverOblF_HistX.Add(m_nStats_OverOblF_Min + ((double)BeanIdx + 0.5) * Step);
+                m_Stats_OverOblF_HistY.Add(0.0);
+            }
+
+            LinCount = m_ShpInfo.m_PntOverOblF.Count;
+            for (LinIdx = 0; LinIdx < LinCount; LinIdx++)
+            {
+                PntCount = m_ShpInfo.m_PntOverOblF[LinIdx].Count;
+                for (PntIdx = 0; PntIdx < PntCount; PntIdx++)
+                {
+                    OverOblFAvg = m_ShpInfo.m_PntOverOblF[LinIdx][PntIdx];
+                    if (OverOblFAvg == 0)
+                        continue;
+
+                    if (OverOblFAvg >= Over20SigmaLeft && OverOblFAvg <= Over20SigmaRight)
+                        m_nStats_OverOblF_Perc20Sigmas += Delta;
+                    if (OverOblFAvg >= Over25SigmaLeft && OverOblFAvg <= Over25SigmaRight)
+                        m_nStats_OverOblF_Perc25Sigmas += Delta;
+                    if (OverOblFAvg >= Over30SigmaLeft && OverOblFAvg <= Over30SigmaRight)
+                        m_nStats_OverOblF_Perc30Sigmas += Delta;
+
+                    BeanIdx = (int)(Math.Floor((OverOblFAvg - m_nStats_OverOblF_Min) / Step));
+                    if (BeanIdx < 0)
+                        BeanIdx = 0;
+                    else
+                        if (BeanIdx > BeansCount - 1)
+                            BeanIdx = BeansCount - 1;
+
+                    m_Stats_OverOblF_HistY[BeanIdx] += Delta;
+                }
+            }
+            m_nStats_OverOblF_Perc20Sigmas *= 100.0;
+            m_nStats_OverOblF_Perc25Sigmas *= 100.0;
+            m_nStats_OverOblF_Perc30Sigmas *= 100.0;
+
+            MaxVal = double.MinValue;
+            for (BeanIdx = 0; BeanIdx < BeansCount; BeanIdx++)
+            {
+                if (m_Stats_OverOblF_HistY[BeanIdx] > MaxVal)
+                {
+                    MaxVal = m_Stats_OverOblF_HistY[BeanIdx];
+                    m_nStats_OverOblF_Med = m_Stats_OverOblF_HistX[BeanIdx];
+                }
+            }
+        }
+
+        /*=== GetFinalStats_OverOblL() ===*/
+        private void GetFinalStats_OverOblL()
+        {
+            int LinCount, LinIdx, PntCount, PntIdx, TotalCount;
+            double OverOblLAvg, Stats_OverOblL_Avg2;
+
+            m_nStats_OverOblL_Min = double.MaxValue;
+            m_nStats_OverOblL_Max = double.MinValue;
+            m_nStats_OverOblL_Avg = 0.0;
+            Stats_OverOblL_Avg2 = 0.0;
+            m_nStats_OverOblL_Med = 0.0;
+            m_nStats_OverOblL_Std = 0.0;
+            m_nStats_OverOblL_Perc20Sigmas = 0.0;
+            m_nStats_OverOblL_Perc25Sigmas = 0.0;
+            m_nStats_OverOblL_Perc30Sigmas = 0.0;
+            m_Stats_OverOblL_HistX = new List<double>();
+            m_Stats_OverOblL_HistY = new List<double>();
+
+            LinCount = m_ShpInfo.m_PntOverOblL.Count;
+            TotalCount = 0;
+            for (LinIdx = 0; LinIdx < LinCount; LinIdx++)
+            {
+                PntCount = m_ShpInfo.m_PntOverOblL[LinIdx].Count;
+                for (PntIdx = 0; PntIdx < PntCount; PntIdx++)
+                {
+                    OverOblLAvg = m_ShpInfo.m_PntOverOblL[LinIdx][PntIdx];
+                    if (OverOblLAvg == 0)
+                        continue;
+
+                    if (OverOblLAvg < m_nStats_OverOblL_Min)
+                        m_nStats_OverOblL_Min = OverOblLAvg;
+                    if (OverOblLAvg > m_nStats_OverOblL_Max)
+                        m_nStats_OverOblL_Max = OverOblLAvg;
+                    m_nStats_OverOblL_Avg += OverOblLAvg;
+                    Stats_OverOblL_Avg2 += OverOblLAvg * OverOblLAvg;
+
+                    ++TotalCount;
+                }
+            }
+            m_nStats_OverOblL_Avg /= (double)TotalCount;
+            Stats_OverOblL_Avg2 /= (double)TotalCount;
+            m_nStats_OverOblL_Std = Math.Sqrt(Stats_OverOblL_Avg2 - m_nStats_OverOblL_Avg * m_nStats_OverOblL_Avg);
+
+            GetFinalStats_OverOblL_Hist(TotalCount);
+        }
+
+        /*=== GetFinalStats_OverOblL_Hist() ===*/
+        private void GetFinalStats_OverOblL_Hist(int TotalCount)
+        {
+            int BeansCount, BeanIdx;
+            double Step;
+            int LinCount, LinIdx, PntCount, PntIdx;
+            double OverOblLAvg, Delta;
+            double MaxVal;
+            double Over20SigmaLeft, Over20SigmaRight;
+            double Over25SigmaLeft, Over25SigmaRight;
+            double Over30SigmaLeft, Over30SigmaRight;
+
+            Over20SigmaLeft = m_nStats_OverOblL_Avg - 2.0 * m_nStats_OverOblL_Std;
+            Over20SigmaRight = m_nStats_OverOblL_Avg + 2.0 * m_nStats_OverOblL_Std;
+            Over25SigmaLeft = m_nStats_OverOblL_Avg - 2.5 * m_nStats_OverOblL_Std;
+            Over25SigmaRight = m_nStats_OverOblL_Avg + 2.5 * m_nStats_OverOblL_Std;
+            Over30SigmaLeft = m_nStats_OverOblL_Avg - 3.0 * m_nStats_OverOblL_Std;
+            Over30SigmaRight = m_nStats_OverOblL_Avg + 3.0 * m_nStats_OverOblL_Std;
+
+            Delta = 1.0 / (double)TotalCount;
+
+            BeansCount = (int)Math.Sqrt((double)TotalCount);
+            Step = (m_nStats_OverOblL_Max - m_nStats_OverOblL_Min) / (double)BeansCount;
+            for (BeanIdx = 0; BeanIdx < BeansCount; BeanIdx++)
+            {
+                m_Stats_OverOblL_HistX.Add(m_nStats_OverOblL_Min + ((double)BeanIdx + 0.5) * Step);
+                m_Stats_OverOblL_HistY.Add(0.0);
+            }
+
+            LinCount = m_ShpInfo.m_PntOverOblL.Count;
+            for (LinIdx = 0; LinIdx < LinCount; LinIdx++)
+            {
+                PntCount = m_ShpInfo.m_PntOverOblL[LinIdx].Count;
+                for (PntIdx = 0; PntIdx < PntCount; PntIdx++)
+                {
+                    OverOblLAvg = m_ShpInfo.m_PntOverOblL[LinIdx][PntIdx];
+                    if (OverOblLAvg == 0)
+                        continue;
+
+                    if (OverOblLAvg >= Over20SigmaLeft && OverOblLAvg <= Over20SigmaRight)
+                        m_nStats_OverOblL_Perc20Sigmas += Delta;
+                    if (OverOblLAvg >= Over25SigmaLeft && OverOblLAvg <= Over25SigmaRight)
+                        m_nStats_OverOblL_Perc25Sigmas += Delta;
+                    if (OverOblLAvg >= Over30SigmaLeft && OverOblLAvg <= Over30SigmaRight)
+                        m_nStats_OverOblL_Perc30Sigmas += Delta;
+
+                    BeanIdx = (int)(Math.Floor((OverOblLAvg - m_nStats_OverOblL_Min) / Step));
+                    if (BeanIdx < 0)
+                        BeanIdx = 0;
+                    else
+                        if (BeanIdx > BeansCount - 1)
+                            BeanIdx = BeansCount - 1;
+
+                    m_Stats_OverOblL_HistY[BeanIdx] += Delta;
+                }
+            }
+            m_nStats_OverOblL_Perc20Sigmas *= 100.0;
+            m_nStats_OverOblL_Perc25Sigmas *= 100.0;
+            m_nStats_OverOblL_Perc30Sigmas *= 100.0;
+
+            MaxVal = double.MinValue;
+            for (BeanIdx = 0; BeanIdx < BeansCount; BeanIdx++)
+            {
+                if (m_Stats_OverOblL_HistY[BeanIdx] > MaxVal)
+                {
+                    MaxVal = m_Stats_OverOblL_HistY[BeanIdx];
+                    m_nStats_OverOblL_Med = m_Stats_OverOblL_HistX[BeanIdx];
+                }
+            }
         }
 
         #endregion Private Final Stats
